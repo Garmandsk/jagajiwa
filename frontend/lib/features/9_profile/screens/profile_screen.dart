@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/features/9_profile/providers/profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:frontend/core/utils/quiz_result_helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -157,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ListTile(
                 leading: const Icon(Icons.psychology_outlined),
                 title: const Text('Hasil Kuis Terakhir'),
-                subtitle: Text(profile.quiz_result.toString() ?? 'Belum pernah mengambil kuis'),
+                subtitle: Text(QuizResultHelper.getQuizResultText(profile.quiz_result)),
               ),
               const Divider(),
               const SizedBox(height: 30),
