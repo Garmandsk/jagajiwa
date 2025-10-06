@@ -1,11 +1,16 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import './app/routes/app_router.dart';
+import 'package:frontend/app/theme/app_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:frontend/features/9_profile/providers/profile_provider.dart';
+import 'package:english_words/english_words.dart';
 import 'package:window_manager/window_manager.dart';
 import 'dart:io' show Platform;
+// ... import lainnya
 
 void main() async {
-  // Pastikan Flutter sudah siap
+  // Pastikan semua binding siap sebelum menjalankan aplikasi
   WidgetsFlutterBinding.ensureInitialized();
 
   // Cek apakah platform adalah Desktop (Windows, macOS, atau Linux)
@@ -32,206 +37,41 @@ void main() async {
     });
   }
 
-  runApp(const MyApp());
-}
+  // Inisialisasi Supabase
+  await Supabase.initialize(
+    url: 'https://ojdzfnfpaosydemfywyq.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZHpmbmZwYW9zeWRlbWZ5d3lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTgzMTEsImV4cCI6MjA3MzU3NDMxMX0.x537kj9JwiKZTfAWYL_Zj1pXKWcgSctAoRLNGt8lk4Y',
+  );
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Namer App',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
-        home: MyHomePage(),
-      ),
-    );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-
-  var favorites = <WordPair>[];
-
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
-    notifyListeners();
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-
-  Widget page;
-  switch (selectedIndex) {
-    case 0:
-      page = GeneratorPage();
-      break;
-    case 1:
-      page = FavoritePage();
-      break;
-    default:
-      throw UnimplementedError('no widget for $selectedIndex');
-  }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
-  }
-}
-
-class FavoritePage extends StatelessWidget {
-  
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var favorites = appState.favorites;
-
-    if (favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }
-
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20), 
-          child: Text('You have ${favorites.length} favorites:')
-        ),
-      
-      
-      for (var favor in favorites)
-        ListTile(
-          leading: Icon(Icons.favorite),
-          title: Text(favor.asLowerCase),
-        ),
+  runApp(
+    // MultiProvider HARUS menjadi widget paling luar
+    MultiProvider(
+      providers: [
+        // Pastikan Anda sudah mendaftarkan ProfileProvider di sini
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),        
+        // ... daftarkan provider lainnya di sini
       ],
-    );
-  }
+      // JagaJiwaApp (yang berisi MaterialApp) ada DI DALAM MultiProvider
+      child: const JagaJiwaApp(),
+    ),
+  );
 }
 
-class GeneratorPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
-
-  final WordPair pair;
+class JagaJiwaApp extends StatelessWidget {
+  const JagaJiwaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    var style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
+    return MaterialApp.router(
+      title: 'JagaJiwa',
+      // Menggunakan tema "Pelita Jiwa" yang sudah kita definisikan
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.dark, // Default ke tema gelap "Pelita Jiwa"
 
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Text(pair.asLowerCase, style: style, semanticsLabel: pair.asPascalCase),
-      ),
+      // Menggunakan GoRouter untuk navigasi
+      routerConfig: AppRouter.router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
