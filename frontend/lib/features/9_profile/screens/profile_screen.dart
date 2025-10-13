@@ -14,7 +14,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   // Variabel state lokal untuk layar ini
-  String? _newAnonymousName;
+  String? _newAnoname;
   bool _isEditing = false;
   bool _isGenerating = false;
   bool _isSaving = false;
@@ -22,11 +22,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Fungsi untuk tombol Roll
   Future<void> _rollNewName() async {
     setState(() => _isGenerating = true);
-    final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final generatedName = await provider.generateNewAnoname();
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final generatedName = await profileProvider.generateNewAnoname();
     if (generatedName != null) {
       setState(() {
-        _newAnonymousName = generatedName;
+        _newAnoname = generatedName;
         _isEditing = true;
       });
     }
@@ -36,17 +36,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Fungsi untuk tombol Batal
   void _cancelEdit() {
     setState(() {
-      _newAnonymousName = null;
+      _newAnoname = null;
       _isEditing = false;
     });
   }
 
   // Fungsi untuk tombol Simpan
   Future<void> _saveNewName() async {
-    if (_newAnonymousName == null) return;
+    if (_newAnoname == null) return;
     setState(() => _isSaving = true);
     final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final success = await provider.updateAnoname(_newAnonymousName!);
+    final success = await provider.updateAnoname(_newAnoname!);
 
     if (mounted) { // Cek jika widget masih ada di tree
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
       setState(() {
-        _newAnonymousName = null;
+        _newAnoname = null;
         _isEditing = false;
       });
     }
@@ -91,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final profile = provider.profile!;
 
           // Menggunakan nama yang sedang diedit jika ada, jika tidak pakai dari provider
-          final currentName = _newAnonymousName ?? profile.anoname;
+          final currentName = _newAnoname ?? profile.anoname;
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
