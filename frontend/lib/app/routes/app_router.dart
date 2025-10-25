@@ -19,7 +19,7 @@ class AppRouter {
       ), 
       GoRoute(
         path: '/home',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
       ),   
       GoRoute(
         path: '/quiz',
