@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/features/9_profile/providers/profile_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:frontend/core/utils/quiz_result_helper.dart';
@@ -14,7 +15,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   // Variabel state lokal untuk layar ini
-  String? _newAnonymousName;
+  String? _newAnoname;
   bool _isEditing = false;
   bool _isGenerating = false;
   bool _isSaving = false;
@@ -22,11 +23,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Fungsi untuk tombol Roll
   Future<void> _rollNewName() async {
     setState(() => _isGenerating = true);
-    final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final generatedName = await provider.generateNewAnoname();
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final generatedName = await profileProvider.generateNewAnoname();
     if (generatedName != null) {
       setState(() {
-        _newAnonymousName = generatedName;
+        _newAnoname = generatedName;
         _isEditing = true;
       });
     }
@@ -36,17 +37,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Fungsi untuk tombol Batal
   void _cancelEdit() {
     setState(() {
-      _newAnonymousName = null;
+      _newAnoname = null;
       _isEditing = false;
     });
   }
 
   // Fungsi untuk tombol Simpan
   Future<void> _saveNewName() async {
-    if (_newAnonymousName == null) return;
+    if (_newAnoname == null) return;
     setState(() => _isSaving = true);
     final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final success = await provider.updateAnoname(_newAnonymousName!);
+    final success = await provider.updateAnoname(_newAnoname!);
 
     if (mounted) { // Cek jika widget masih ada di tree
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
       setState(() {
-        _newAnonymousName = null;
+        _newAnoname = null;
         _isEditing = false;
       });
     }
@@ -91,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final profile = provider.profile!;
 
           // Menggunakan nama yang sedang diedit jika ada, jika tidak pakai dari provider
-          final currentName = _newAnonymousName ?? profile.anoname;
+          final currentName = _newAnoname ?? profile.anoname;
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
@@ -169,7 +170,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: const Text('Logout', style: TextStyle(color: Colors.red)),
               ),
-              
+              ElevatedButton(
+                onPressed: () {
+                  context.go('/home');
+                },                
+                child: const Text('Beranda'),
+              ),
             ],
           );
         },

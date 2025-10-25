@@ -6,11 +6,19 @@ class AppTheme {
   static const Color darkBackgroundColor = Color(0xFF121212); // Abu-abu sangat tua
   static const Color lightCardColor = Color(0xFFFFFFFF); // Putih bersih untuk kartu
 
+   // Tema Terang (sebagai opsi)
+  static final ThemeData lightTheme = ThemeData(
+    brightness: Brightness.light,
+    primaryColor: accentColor,
+    // ... konfigurasi tema terang lainnya
+  );
+
   // Tema Gelap "Pelita Jiwa"
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: darkBackgroundColor,
-    primaryColor: accentColor,
+    // primarySwatch: Colors.amber, // Gunakan swatch amber untuk konsistensi
+    primaryColor: accentColor,    
     colorScheme: const ColorScheme.dark(
       primary: accentColor,
       secondary: accentColor,
@@ -31,12 +39,5 @@ class AppTheme {
       backgroundColor: darkBackgroundColor,
       elevation: 0,
     ),
-  );
-
-  // Tema Terang (sebagai opsi)
-  static final ThemeData lightTheme = ThemeData(
-    brightness: Brightness.light,
-    primaryColor: accentColor,
-    // ... konfigurasi tema terang lainnya
   );
 }
