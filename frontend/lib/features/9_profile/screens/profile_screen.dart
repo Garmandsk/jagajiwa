@@ -176,6 +176,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },                
                 child: const Text('Beranda'),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  context.push('/knowledge');
+                },                
+                child: const Text('Pusat Pengetahuan'),
+              ),
             ],
           );
         },

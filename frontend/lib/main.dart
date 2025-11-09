@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/5_knowledge_center/providers/knowledge_provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import './app/routes/app_router.dart';
 import 'package:frontend/app/theme/app_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,6 +14,7 @@ import 'dart:io' show Platform;
 void main() async {
   // Pastikan semua binding siap sebelum menjalankan aplikasi
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID');
 
   // Cek apakah platform adalah Desktop (Windows, macOS, atau Linux)
   // Ini penting agar kode ini tidak berjalan di Android/iOS
@@ -48,7 +51,8 @@ void main() async {
     MultiProvider(
       providers: [
         // Pastikan Anda sudah mendaftarkan ProfileProvider di sini
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),        
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),      
+        ChangeNotifierProvider(create:  (_) => KnowledgeProvider()),
         // ... daftarkan provider lainnya di sini
       ],
       // JagaJiwaApp (yang berisi MaterialApp) ada DI DALAM MultiProvider

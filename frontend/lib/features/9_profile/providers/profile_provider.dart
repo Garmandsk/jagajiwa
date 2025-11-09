@@ -41,7 +41,7 @@ class ProfileProvider extends ChangeNotifier {
       final response = await _supabase
           .from('profiles')
           .select()
-          .eq('id', '73345a4b-736e-41cf-885c-0eae026574a8') 
+          .eq('profile_id', '73345a4b-736e-41cf-885c-0eae026574a8') 
           .single(); // <-- BIANG KELADINYA DI SINI
 
       print('Response from Supabase: $response');
@@ -78,7 +78,7 @@ class ProfileProvider extends ChangeNotifier {
       await _supabase
         .from('profiles')
         .update({'anoname': newAnoname}) // Ganti kolom 'name' menjadi 'anonymous_name'
-        .eq('id', _profile!.id);
+        .eq('profile_id', _profile!.profile_id);
       
       // Refresh data profil lokal setelah berhasil update
       await fetchProfile();
@@ -88,5 +88,58 @@ class ProfileProvider extends ChangeNotifier {
       print('Error updating anoname: $e');
       return false;
     }
+  }
+
+  Future<void> toggleArticleFavorite(String articleId) async { // Parameter diubah ke String
+    
+    // if (_profile == null) return;
+
+    // // --- UBAH INI ---
+    // // Buat salinan list favorit (sekarang List<String>)
+    // final List<String> currentFavorites = List<String>.from(_profile!.favorite_articles_id);
+
+    // // Logika Toggle (tetap sama, tapi sekarang bekerja dengan String)
+    // if (currentFavorites.contains(articleId)) {
+    //   currentFavorites.remove(articleId);
+    // } else {
+    //   currentFavorites.add(articleId);
+    // }
+
+    // // Simpan list baru ke Supabase
+    // try {
+    //   final user = _supabase.auth.currentUser;
+    //   if (user == null) throw "Not logged in";
+
+    //   await _supabase
+    //       .from('profiles')
+    //       .update({'favorite_article_ids': currentFavorites}) // Kirim List<String>
+    //       .eq('id', user.id);
+      
+    //   // Update data profil lokal
+    //   _profile!.favorite_articles_id = currentFavorites;
+    //   notifyListeners(); 
+
+    // } catch (e) {
+    //   print("Error toggling favorite: $e");
+    // }
+
+    final List<String> currentFavorites = List<String>.from(_profile!.favorite_articles_id);
+
+    // Logika Toggle (tetap sama, tapi sekarang bekerja dengan String)
+    if (currentFavorites.contains(articleId)) {
+      currentFavorites.remove(articleId);
+    } else {
+      currentFavorites.add(articleId);
+    }
+
+    await _supabase
+      .from('profiles')
+      .update({'favorite_articles_id': currentFavorites}) // Kirim List<String>
+      .eq('profile_id', _profile!.profile_id);
+      
+      // Update data profil lokal
+      _profile!.favorite_articles_id = currentFavorites;
+      notifyListeners();
+      print("hi");
   }
 }

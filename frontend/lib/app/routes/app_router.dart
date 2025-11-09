@@ -10,11 +10,11 @@ class AppRouter {
         builder: (context, state) => const SplashScreen(), // Ganti dengan widget Anda
       ),
       GoRoute(
-        path: '/sign_in',
+        path: '/sign-in',
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ),    
       GoRoute(
-        path: '/sign_up',
+        path: '/sign-up',
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
@@ -26,27 +26,32 @@ class AppRouter {
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
-        path: '/quiz_start',
+        path: '/quiz-start',
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
-        path: '/quiz_result',
+        path: '/quiz-result',
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
-        path: '/knowledge_article_list',
+        path: '/knowledge',
+        builder: (context, state) => const KnowledgeScreen(),
+        routes: [
+          GoRoute(
+            path: '/article-detail',
+            builder: (context, state) {
+              final article = state.extra as Article; // Ambil data artikel dari extra
+              return ArticleDetailScreen(article: article); // Kirim data ke layar detail
+            },
+          ),
+        ], // Ganti dengan widget Anda
+      ),       
+      GoRoute(
+        path: '/loss-simulation',
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
-        path: '/knowledge_article_detail',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
-      ), 
-      GoRoute(
-        path: '/loss_simulation',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
-      ), 
-      GoRoute(
-        path: '/anonym_forum',
+        path: '/anonym-forum',
         builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
