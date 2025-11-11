@@ -87,5 +87,38 @@ class AppTheme {
         foregroundColor: Colors.black, // Teks tombol (onPrimary)
       ),
     ),
+
+    // ... di dalam AppTheme.darkTheme
+
+  switchTheme: SwitchThemeData(
+    // 1. thumbColor (Warna lingkaran/jempol)
+    thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      // Jika 'selected' (ON)
+      if (states.contains(WidgetState.selected)) {
+        return AppTheme.accentColor; // Gunakan warna aksen (Emas/Kuning)
+      }
+      // Jika 'unselected' (OFF)
+      return Colors.grey[200] ?? Colors.white; // Warna netral (putih keabuan)
+    }),
+
+    // 2. trackColor (Warna rel/jalur)
+    trackColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      // Jika 'selected' (ON)
+      if (states.contains(WidgetState.selected)) {
+        // Gunakan warna aksen yang sedikit transparan
+        return AppTheme.accentColor.withOpacity(0.5);
+      }
+      // Jika 'unselected' (OFF)
+      return Colors.black26; // Warna abu-abu yang umum untuk track nonaktif
+    }),
+    
+    // 3. trackOutlineColor (Warna garis luar rel saat OFF - M3 Style)
+    trackOutlineColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        return Colors.transparent; // Tidak perlu outline saat ON
+      }
+      return Colors.black38; // Garis luar abu-abu
+    }),
+  ),
   );
 }

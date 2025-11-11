@@ -20,7 +20,7 @@ class ArticleDetailScreen extends StatefulWidget {
 class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    final profileProvider = context.watch<ProfileProvider>();
+    final profileProvider = context.read<ProfileProvider>();
     final bool isFavorited = profileProvider.profile?.favorite_articles_id.contains(widget.article.knowledge_article_id) ?? false;
     print("article_detail_screen.dart: ${profileProvider.profile!.favorite_articles_id}");
     print("article_detail_screen.dart: ${widget.article.knowledge_article_id}");
@@ -134,7 +134,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                                 isFavorited ? Icons.favorite : Icons.favorite_border_outlined,
                                 color: isFavorited ? Colors.red : Colors.black,
                               ),
-                              onPressed: () => context.read<ProfileProvider>().toggleArticleFavorite(widget.article.knowledge_article_id),
+                              onPressed: () => profileProvider.toggleArticleFavorite(widget.article.knowledge_article_id),
                             ),
                             IconButton(
                               icon: const Icon(Icons.share),
