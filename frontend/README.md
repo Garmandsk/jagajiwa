@@ -69,7 +69,7 @@ Proyek ini menggunakan arsitektur **feature-first** yang bersih untuk memisahkan
 
   * **`lib/app/`**: Konfigurasi global (Tema, Rute GoRouter, Widget Kustom Bersama).
   * **`lib/core/`**: Kode pendukung (Model Data, Servis API, Helper/Utils).
-  * **`libf/eatures/`**: Inti aplikasi. Setiap fitur (misal: `9_profile`, `7_community_forum`) memiliki folder sendiri yang berisi `screens`, `providers`, dan `widgets` spesifik untuk fitur tersebut.
+  * **`lib/features/`**: Inti aplikasi. Setiap fitur (misal: `9_profile`, `7_community_forum`) memiliki folder sendiri yang berisi `screens`, `providers`, dan `widgets` spesifik untuk fitur tersebut.
   * **`lib/main.dart`**: Titik masuk utama, inisialisasi Supabase, dan registrasi `MultiProvider`.
 
 ## 🔄 State Management

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/features/9_profile/providers/profile_provider.dart';
+import 'package:frontend/features/9_profile/providers/setting_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:frontend/core/utils/quiz_result_helper.dart';
+import 'package:intl/intl.dart'; // Import intl untuk format tanggal
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,16 +16,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Variabel state lokal untuk layar ini
+  // State lokal tetap ada
   String? _newAnoname;
   bool _isEditing = false;
   bool _isGenerating = false;
   bool _isSaving = false;
 
-  // Fungsi untuk tombol Roll
+  // --- Fungsi helper tetap sama ---
   Future<void> _rollNewName() async {
     setState(() => _isGenerating = true);
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final profileProvider = context.read<ProfileProvider>();
     final generatedName = await profileProvider.generateNewAnoname();
     if (generatedName != null) {
       setState(() {
@@ -34,7 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _isGenerating = false);
   }
 
-  // Fungsi untuk tombol Batal
   void _cancelEdit() {
     setState(() {
       _newAnoname = null;
@@ -42,14 +43,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  // Fungsi untuk tombol Simpan
   Future<void> _saveNewName() async {
     if (_newAnoname == null) return;
     setState(() => _isSaving = true);
-    final provider = Provider.of<ProfileProvider>(context, listen: false);
+    final provider = context.read<ProfileProvider>();
     final success = await provider.updateAnoname(_newAnoname!);
 
-    if (mounted) { // Cek jika widget masih ada di tree
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(success ? 'Nama berhasil diperbarui!' : 'Gagal memperbarui nama.'),
@@ -64,67 +64,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _isSaving = false);
   }
 
-
-  @override
+   @override
   void initState() {
     // ... (kode initState Anda yang sudah ada tetap di sini)
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProfileProvider>(context, listen: false).fetchProfile();
+      context.read<ProfileProvider>().fetchProfile();
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
+    print('Rebuilding ProfileScreen');
+    
     return Scaffold(
       appBar: AppBar(title: const Text('Profil Saya')),
-      // Kita hanya butuh Consumer di sini untuk mendapatkan data awal
+      // Gunakan ListView untuk daftar pengaturan
       body: Consumer<ProfileProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && !_isEditing) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (provider.profile == null) {
-            return const Center(child: Text('Gagal memuat profil.'));
-          }
+        builder: (context, profileProvider, child) {
+          print('Rebuilding ProfileScreen 2');
+          // Tampilkan loading spinner besar
+        if (profileProvider.isLoading && profileProvider.profile == null) return const Center(child: CircularProgressIndicator());
 
-          final profile = provider.profile!;
+        // Tampilkan error jika gagal load
+        if (profileProvider.profile == null) return Center(child: Text(profileProvider.errorMessage ?? 'Gagal memuat profil.'));        
+        
+        // Data sudah ada, simpan di variabel
+        final profile = profileProvider.profile!;
 
-          // Menggunakan nama yang sedang diedit jika ada, jika tidak pakai dari provider
-          final currentName = _newAnoname ?? profile.anoname;
-
-          return ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              // ... (ListTile untuk username, dll)
-
-              ListTile(
-                leading: FaIcon(
-                  FontAwesomeIcons.userSecret,
-                  size: 45,
-                  color: Colors.grey[600],
-                ),
-                title: const Text('Anoname'),
-                subtitle: Text(
-                  currentName ?? 'Memuat...',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                trailing: _isGenerating
-                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-                    : IconButton(
-                        icon: const Icon(Icons.sync),
-                        tooltip: 'Buat nama baru',
-                        onPressed: _rollNewName,
+        return ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            // --- Bagian Anoname (Dinamis dengan Consumer) ---
+            // Gunakan Card agar sesuai tema "Pelita Jiwa" (latar putih, teks hitam)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                // Consumer hanya membungkus bagian yang berubah
+                child: Consumer<ProfileProvider>(
+                  builder: (context, profileProvider, child) {
+                    // Ambil data terbaru dari 'profileProvider'
+                    final currentAnoname = _isEditing 
+                        ? _newAnoname 
+                        : profileProvider.profile?.anoname;
+        
+                    return ListTile(
+                      leading: FaIcon(
+                        FontAwesomeIcons.userSecret,
+                        size: 40,
+                        color: Colors.grey[700], // Warna ikon di atas kartu putih
                       ),
+                      title: const Text('Anoname'),
+                      subtitle: Text(
+                        currentAnoname ?? 'Memuat...',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      trailing: _isGenerating
+                          ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                          : IconButton(
+                              icon: const Icon(Icons.sync),
+                              tooltip: 'Buat nama baru',
+                              onPressed: _rollNewName,
+                            ),
+                    );
+                  },
+                ),
               ),
-
-              // Tombol Batal dan Simpan yang hanya muncul saat mode edit
-              Visibility(
-                visible: _isEditing,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: _isSaving
+            ),
+            
+            // --- Tombol Simpan/Batal (Dinamis dengan State Lokal) ---
+            Visibility(
+              visible: _isEditing,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: _isSaving
                     ? const Center(child: CircularProgressIndicator())
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -139,53 +153,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                ),
               ),
-
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: const Text('Username'),
-                subtitle: Text(profile.username),
+            ),
+            
+            const SizedBox(height: 16), // Jarak antar kartu
+        
+            // --- Bagian Info Lain (Statis) ---
+            // Bungkus sisanya dengan Card agar rapi
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.person_outline),
+                    title: const Text('Username'),
+                    subtitle: Text(profile.username), // Data statis (tidak berubah)
+                  ),
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  ListTile(
+                    leading: const Icon(Icons.calendar_today_outlined),
+                    title: const Text('Bergabung Sejak'),
+                    // Gunakan intl untuk format tanggal yang benar
+                    subtitle: Text(
+                      DateFormat('d MMM y', 'id_ID').format(profile.created_at)
+                    ),
+                  ),
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  ListTile(
+                    leading: const Icon(Icons.psychology_outlined),
+                    title: const Text('Hasil Kuis Terakhir'),
+                    subtitle: Text(
+                      QuizResultHelper.getQuizResultText(profile.quiz_result),
+                      style: TextStyle(
+                        // Beri warna sesuai helper
+                        color: QuizResultHelper.getQuizResultColor(profile.quiz_result),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.calendar_today_outlined),
-                title: const Text('Bergabung Sejak'),
-                // Contoh format tanggal sederhana
-                subtitle: Text('${profile.created_at.day}/${profile.created_at.month}/${profile.created_at.year}'),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.psychology_outlined),
-                title: const Text('Hasil Kuis Terakhir'),
-                subtitle: Text(QuizResultHelper.getQuizResultText(profile.quiz_result)),
-              ),
-              const Divider(),
-              const SizedBox(height: 30),
-              TextButton(
-                onPressed: () {
-                  // Tambahkan logika untuk logout di sini
-                  Supabase.instance.client.auth.signOut();
-                },
-                child: const Text('Logout', style: TextStyle(color: Colors.red)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  context.go('/home');
-                },                
-                child: const Text('Beranda'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  context.push('/knowledge');
-                },                
-                child: const Text('Pusat Pengetahuan'),
-              ),
-            ],
-          );
-        },
-      ),
+            ),
+        
+            const SizedBox(height: 16),
+        
+            Card(
+              color: Theme.of(context).colorScheme.background,
+              child: Consumer<SettingProvider>(
+                builder: (context, settingProvider, child){
+                  return Column(
+                    children: [
+                      Card(
+                        child: SwitchListTile(
+                          title: const Text('Notifikasi'),
+                          value: settingProvider.notificationsEnabled,
+                          onChanged: (value) {
+                            // Panggil fungsi di provider
+                            settingProvider.toggleNotifications(value);
+                          },
+                        ),
+                      ),
+                      
+                      // Kartu 2: Pengingat Harian
+                      Card(
+                        child: SwitchListTile(
+                          title: const Text('Pengingat Harian'),
+                          value: settingProvider.dailyReminderEnabled,
+                          onChanged: (value) {
+                            settingProvider.toggleDailyReminder(value);
+                          },
+                        ),
+                      ),
+                      
+                      // Kartu 3: Mode Gelap
+                      Card(
+                        child: SwitchListTile(
+                          title: const Text('Mode Gelap'),
+                          // Cek apakah mode saat ini adalah gelap
+                          value: settingProvider.themeMode == ThemeMode.dark,
+                          onChanged: (value) {
+                            // value adalah true jika switch diaktifkan (gelap)
+                            settingProvider.toggleTheme(value);
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              )
+            ),
+            
+        
+            const SizedBox(height: 30),
+        
+            // --- Tombol Aksi ---
+            ElevatedButton(
+              onPressed: () => context.go('/home'),
+              child: const Text('Beranda'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => context.push('/knowledge'), // push agar bisa kembali
+              child: const Text('Pusat Pengetahuan'),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () {
+                Supabase.instance.client.auth.signOut();
+                // Arahkan kembali ke login setelah logout
+                context.go('/sign-in'); 
+              },
+              child: const Text('Logout', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ); // Supaya tidak error
+      }),
     );
   }
 }

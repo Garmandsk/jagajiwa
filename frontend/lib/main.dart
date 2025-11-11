@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/5_knowledge_center/providers/knowledge_provider.dart';
+import 'package:frontend/features/9_profile/providers/setting_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import './app/routes/app_router.dart';
 import 'package:frontend/app/theme/app_theme.dart';
@@ -51,7 +52,8 @@ void main() async {
     MultiProvider(
       providers: [
         // Pastikan Anda sudah mendaftarkan ProfileProvider di sini
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),      
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),   
+        ChangeNotifierProvider(create: (_) => SettingProvider()), 
         ChangeNotifierProvider(create:  (_) => KnowledgeProvider()),
         // ... daftarkan provider lainnya di sini
       ],
@@ -66,12 +68,14 @@ class JagaJiwaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingProvider = context.watch<SettingProvider>();
+
     return MaterialApp.router(
       title: 'JagaJiwa',
       // Menggunakan tema "Pelita Jiwa" yang sudah kita definisikan
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark, // Default ke tema gelap "Pelita Jiwa"
+      themeMode: settingProvider.themeMode, // Default ke tema gelap "Pelita Jiwa"
 
       // Menggunakan GoRouter untuk navigasi
       routerConfig: AppRouter.router,

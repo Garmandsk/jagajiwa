@@ -1,7 +1,7 @@
 class Profile{
   final String profile_id;
   final DateTime created_at;
-  final String anoname;
+  String? anoname;
   final String username;
   final int quiz_result;
   List<String> favorite_articles_id;
@@ -9,7 +9,7 @@ class Profile{
   Profile({
     required this.profile_id,
     required this.created_at,
-    required this.anoname,
+    this.anoname,
     required this.username,
     required this.quiz_result,
     required this.favorite_articles_id,
