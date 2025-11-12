@@ -28,6 +28,12 @@ class HomeScreen extends StatelessWidget{
               },
               child: const Text('Profil Saya'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                context.go('/chatbot');
+              },
+              child: const Text('Ai'),
+            )
           ],
         ),
       ),
