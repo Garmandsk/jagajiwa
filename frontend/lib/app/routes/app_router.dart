@@ -4,7 +4,7 @@ import 'package:frontend/app/widgets/barrel.dart';
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/profile', // Lokasi awal saat aplikasi dibuka
+    initialLocation: '/sign-in', // Lokasi awal saat aplikasi dibuka
     routes: [
       GoRoute(
         path: '/splash',
@@ -12,11 +12,11 @@ class AppRouter {
       ),
       GoRoute(
         path: '/sign-in',
-        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
       ),    
       GoRoute(
         path: '/sign-up',
-        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const SignUpScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/home',
