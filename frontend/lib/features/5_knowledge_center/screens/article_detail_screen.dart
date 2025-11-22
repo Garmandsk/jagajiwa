@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/app/theme/app_theme.dart';
 import 'package:frontend/core/models/article_model.dart';
 import 'package:frontend/core/utils/knowledge_category_helper.dart';
 import 'package:go_router/go_router.dart';
@@ -51,15 +53,10 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.1),
+                  backgroundColor: Colors.white.withAlpha(25),
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.filter_list, 
-                      color: Colors.white
-                    ),
-                    onPressed: () {
-                      // Tambahkan logika filter/sort di sini
-                    },
+                    icon: FaIcon(FontAwesomeIcons.dice, color: Colors.white),
+                    onPressed: () => context.push("/loss-simulation"), 
                   ),
                 ),
               ),

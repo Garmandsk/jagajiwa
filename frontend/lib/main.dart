@@ -47,39 +47,34 @@ void main() async {
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZHpmbmZwYW9zeWRlbWZ5d3lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTgzMTEsImV4cCI6MjA3MzU3NDMxMX0.x537kj9JwiKZTfAWYL_Zj1pXKWcgSctAoRLNGt8lk4Y',
   );
 
-  runApp(
-    // MultiProvider HARUS menjadi widget paling luar
-    MultiProvider(
-      providers: [
-        // Pastikan Anda sudah mendaftarkan ProfileProvider di sini
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),   
-        ChangeNotifierProvider(create: (_) => SettingProvider()), 
-        ChangeNotifierProvider(create:  (_) => KnowledgeProvider()),
-        // ... daftarkan provider lainnya di sini
-      ],
-      // JagaJiwaApp (yang berisi MaterialApp) ada DI DALAM MultiProvider
-      child: const JagaJiwaApp(),
-    ),
-  );
+  runApp(const JagaJiwaApp());
 }
 
 class JagaJiwaApp extends StatelessWidget {
   const JagaJiwaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final settingProvider = context.watch<SettingProvider>();
+  Widget build(BuildContext context) {    
 
-    return MaterialApp.router(
-      title: 'JagaJiwa',
-      // Menggunakan tema "Pelita Jiwa" yang sudah kita definisikan
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: settingProvider.themeMode, // Default ke tema gelap "Pelita Jiwa"
-
-      // Menggunakan GoRouter untuk navigasi
-      routerConfig: AppRouter.router,
-      debugShowCheckedModeBanner: false,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),   
+        ChangeNotifierProvider(create: (_) => SettingProvider()), 
+        ChangeNotifierProvider(create:  (_) => KnowledgeProvider()),
+      ],
+      // Gunakan Consumer<SettingProvider> di sini
+      child: Consumer<SettingProvider>(
+        builder: (context, settingProvider, child) {
+          return MaterialApp.router(
+            title: 'JagaJiwa',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,      
+            themeMode: settingProvider.themeMode,      
+            routerConfig: AppRouter.router,
+            debugShowCheckedModeBanner: false,
+          );
+        },
+      ),
     );
   }
 }

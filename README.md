@@ -75,22 +75,44 @@ Untuk berkontribusi pada proyek ini, silakan ikuti langkah-langkah di bawah ini.
 
 Kami menggunakan alur kerja **Agile** dengan *feature branching*. **DILARANG PUSH LANGSUNG KE `main` ATAU `develop`**.
 
-1.  **Mulai dari `develop`:**
+1.  **Clone Repositori:** (Jika Anda belum melakukannya dari *root*)
+    ```bash
+    git clone https://github.com/Garmandsk/jagajiwa.git
+    ```
+2.  **Masuk ke Folder Frontend:**
+    ```bash
+    cd jagajiwa/frontend
+    ```
+3.  **Install Dependensi:**
+    ```bash
+    flutter pub get
+    ```
+4.  **Konfigurasi Environment (SANGAT PENTING):**
+    Aplikasi ini perlu terhubung ke Supabase.
+    * Buat file baru di `frontend/lib/` bernama `.env`.
+    * Isi file tersebut dengan kredensial Supabase Anda (tanyakan pada Project Manager atau lihat di dashboard Supabase):
+        ```ini
+        SUPABASE_URL=https://<project-id>.supabase.co
+        SUPABASE_ANON_KEY=<your-public-anon-key>
+        ```
+    * *Catatan: Pastikan file `.env` ini sudah ditambahkan ke `.gitignore`!*
+    * (Pastikan Anda telah memuat variabel-variabel ini di `main.dart` Anda, biasanya menggunakan *package* `flutter_dotenv`).
+5.  **Mulai dari `develop`:**
     ```bash
     git checkout develop
     git pull origin develop
     ```
-2.  **Buat Branch Fitur Baru:**
+6.  **Buat Branch Fitur Baru:**
     ```bash
     git checkout -b feature/nama-fitur-anda
     ```
-3.  **Kerjakan & Commit:**
+7.  **Kerjakan & Commit:**
     * Lakukan perubahan kode Anda.
     * *Commit* dengan pesan yang jelas/semantic (misal: `feat: Menambahkan tombol logout di profil`).
-4.  **Buat Pull Request (PR):**
+8.  **Buat Pull Request (PR):**
     * Push *branch* Anda ke GitHub (`git push origin feature/nama-fitur-anda`).
     * Buka GitHub dan buat **Pull Request** dari *branch* Anda ke *branch* `develop`.
-5.  **Review & Merge:**
+9.  **Review & Merge:**
     * Tunggu minimal 1 anggota tim lain me-review PR Anda.
     * Setelah disetujui, PR akan di-*merge* ke `develop`.
 
