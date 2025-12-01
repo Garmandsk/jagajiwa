@@ -1,96 +1,73 @@
-import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:flutter/foundation.dart';
 import '../model/forum_model.dart';
+import 'dart:math';
 
-class ForumProvider with ChangeNotifier {
-  final List<ForumPost> _posts = [];
+class ForumProvider extends ChangeNotifier {
+  final List<Post> _posts = [];
 
-  List<ForumPost> get posts => _posts.reversed.toList();
+  List<Post> get posts => List.unmodifiable(_posts.reversed); // newest first
 
-  // Add post
-  void addPost(String content) {
-    _posts.add(
-      ForumPost(
-        id: const Uuid().v4(),
-        content: content,
-        createdAt: DateTime.now(),
-        comments: [],
+  final Random _rnd = Random();
+
+  ForumProvider() {
+    // dummy initial data
+    _seedDummy();
+  }
+
+  void _seedDummy() {
+    _posts.addAll([
+      Post(
+        id: 'p1',
+        author: 'Kambing234',
+        content:
+            'Apa keluh kesah kalian tentang judi teman-teman.. aku khawatir nih. Ini cuma curhat yaa...',
+        likes: 120,
+        comments: [
+          Comment(id: 'c1', author: 'Jeruk12', content: 'Stop judi tuh payah banget yah'),
+          Comment(id: 'c2', author: 'KucingPutih23', content: 'Aku sudah 15 tahun bermain judi...'),
+        ],
       ),
-    );
-    notifyListeners();
-  }
-
-  // Like Post
-  void toggleLikePost(String id) {
-    final post = _posts.firstWhere((e) => e.id == id);
-    if (post.isLiked) {
-      post.likes--;
-      post.isLiked = false;
-    } else {
-      post.likes++;
-      post.isLiked = true;
-    }
-    notifyListeners();
-  }
-
-  // Add comment to post
-  void addComment(String postId, String text) {
-    final post = _posts.firstWhere((e) => e.id == postId);
-    post.comments.add(
-      ForumComment(
-        id: const Uuid().v4(),
-        content: text,
-        createdAt: DateTime.now(),
-        replies: [],
+      Post(
+        id: 'p2',
+        author: 'AngsaHitam23',
+        content:
+            'ini isinya akwjdahskdhakwd kasbndkabwjbdajsbdb ... more',
+        likes: 20,
       ),
-    );
+    ]);
+  }
+
+  String _makeId(String prefix) => '\$prefix\${DateTime.now().millisecondsSinceEpoch}\${_rnd.nextInt(999)}';
+
+  void createPost(String author, String content) {
+    final p = Post(id: _makeId('p'), author: author, content: content);
+    _posts.add(p);
     notifyListeners();
   }
 
-  // Add reply to comment
-  void addReply(String postId, String commentId, String text) {
-    final post = _posts.firstWhere((e) => e.id == postId);
-    final comment = post.comments.firstWhere((c) => c.id == commentId);
-
-    comment.replies.add(
-      ForumComment(
-        id: const Uuid().v4(),
-        content: text,
-        createdAt: DateTime.now(),
-      ),
-    );
-
+  void toggleLike(String postId) {
+    final idx = _posts.indexWhere((p) => p.id == postId);
+    if (idx == -1) return;
+    _posts[idx].likes += 1; // simple: only increment (no unlike logic for demo)
     notifyListeners();
   }
 
-  // Like comment
-  void toggleLikeComment(String postId, String commentId) {
-    final post = _posts.firstWhere((e) => e.id == postId);
-    final comment = post.comments.firstWhere((e) => e.id == commentId);
-
-    if (comment.isLiked) {
-      comment.likes--;
-      comment.isLiked = false;
-    } else {
-      comment.likes++;
-      comment.isLiked = true;
-    }
+  void addComment(String postId, String author, String content) {
+    final idx = _posts.indexWhere((p) => p.id == postId);
+    if (idx == -1) return;
+    final c = Comment(id: _makeId('c'), author: author, content: content);
+    _posts[idx].comments.add(c);
     notifyListeners();
   }
 
-  // Like reply
-  void toggleLikeReply(String postId, String commentId, String replyId) {
-    final post = _posts.firstWhere((e) => e.id == postId);
-    final comment = post.comments.firstWhere((e) => e.id == commentId);
-    final reply = comment.replies.firstWhere((e) => e.id == replyId);
-
-    if (reply.isLiked) {
-      reply.likes--;
-      reply.isLiked = false;
-    } else {
-      reply.likes++;
-      reply.isLiked = true;
-    }
+  void addReply(String postId, String commentId, String author, String content) {
+    final pIdx = _posts.indexWhere((p) => p.id == postId);
+    if (pIdx == -1) return;
+    final comments = _posts[pIdx].comments;
+    final cIdx = comments.indexWhere((c) => c.id == commentId);
+    if (cIdx == -1) return;
+    final reply = Comment(id: _makeId('r'), author: author, content: content);
+    comments[cIdx].replies.add(reply);
     notifyListeners();
   }
 }

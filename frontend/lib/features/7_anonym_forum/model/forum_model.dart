@@ -1,35 +1,37 @@
-class ForumComment {
+
+class Comment {
   final String id;
+  final String author; // anonymous name
   final String content;
   final DateTime createdAt;
-  int likes;
-  bool isLiked;
-  List<ForumComment> replies;
+  final List<Comment> replies;
 
-  ForumComment({
+  Comment({
     required this.id,
+    required this.author,
     required this.content,
-    required this.createdAt,
-    this.likes = 0,
-    this.isLiked = false,
-    this.replies = const [],
-  });
+    DateTime? createdAt,
+    List<Comment>? replies,
+  })  : createdAt = createdAt ?? DateTime.now(),
+        replies = replies ?? [];
 }
 
-class ForumPost {
-  final String id;
-  final String content;
-  final DateTime createdAt;
-  int likes;
-  bool isLiked;
-  List<ForumComment> comments;
 
-  ForumPost({
+class Post {
+  final String id;
+  final String author; // anonymous handle
+  String content;
+  int likes;
+  final DateTime createdAt;
+  final List<Comment> comments;
+
+  Post({
     required this.id,
+    required this.author,
     required this.content,
-    required this.createdAt,
     this.likes = 0,
-    this.isLiked = false,
-    this.comments = const [],
-  });
+    DateTime? createdAt,
+    List<Comment>? comments,
+  })  : createdAt = createdAt ?? DateTime.now(),
+        comments = comments ?? [];
 }
