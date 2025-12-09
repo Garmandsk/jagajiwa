@@ -8,7 +8,6 @@ import 'package:frontend/app/theme/app_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/features/9_profile/providers/profile_provider.dart';
-import 'package:english_words/english_words.dart';
 import 'package:window_manager/window_manager.dart';
 import 'dart:io' show Platform;
 // ... import lainnya
