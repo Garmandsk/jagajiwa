@@ -7,34 +7,16 @@ import './app/routes/app_router.dart';
 import 'package:frontend/app/theme/app_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:frontend/features/9_profile/providers/profile_provider.dart';
-import 'package:english_words/english_words.dart';
-import 'package:window_manager/window_manager.dart';
-import 'dart:io' show Platform;
-// ... import lainnya
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+// Provider
+import 'features/7_anonym_forum/providers/anonym_forum_provider.dart';
+
+// Navigation
+import 'navigation/navigation.dart';
 
 void main() async {
-  // Pastikan semua binding siap sebelum menjalankan aplikasi
-  WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('id_ID');
-
-  // Cek apakah platform adalah Desktop (Windows, macOS, atau Linux)
-  // Ini penting agar kode ini tidak berjalan di Android/iOS
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    // Inisialisasi window manager
-    await windowManager.ensureInitialized();
-
-    // Tentukan opsi jendela Anda
-    WindowOptions windowOptions = const WindowOptions(
-      // Atur ukuran sesuai target device (contoh: Pixel 5, 393x851 logical pixels)
-      size: Size(393, 851),
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
-      title: "JagaJiwa - Mode Debug",
-    );
-
+  await dotenv.load(fileName: ".env"); // Memuat variabel lingkungan dari
     // Terapkan opsi saat jendela siap ditampilkan
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
@@ -51,8 +33,8 @@ void main() async {
   runApp(const JagaJiwaApp());
 }
 
-class JagaJiwaApp extends StatelessWidget {
-  const JagaJiwaApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {    

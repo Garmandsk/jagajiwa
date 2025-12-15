@@ -1,3 +1,4 @@
+import 'package:frontend/features/8_chatbot/screens/chatbot_screen.dart';
 import 'package:frontend/features/6_loss_simulation/screens/loss_simulation_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/app/widgets/barrel.dart';
@@ -57,7 +58,7 @@ class AppRouter {
       ), 
       GoRoute(
         path: '/chatbot',
-        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const AIChatBoxScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/profile',
