@@ -60,7 +60,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
                   onPressed: () {
                     final txt = _controller.text.trim();
                     if (txt.isEmpty) return;
-                    Provider.of<ForumProvider>(context, listen: false).createPost('Anon', txt);
+                    Provider.of<AnonymForumProvider>(context, listen: false).createPost('Anon', txt);
                     Navigator.pop(context);
                   },
                   child: const Text('Kirim'),

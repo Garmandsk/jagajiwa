@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/anonym_forum_provider.dart';
-import 'detail_comment.dart';
-import 'make_post.dart';
+import 'detail_comment_screen.dart';
+import 'make_post_screen.dart';
 
 class AnonymForumScreen extends StatelessWidget {
   const AnonymForumScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class AnonymForumScreen extends StatelessWidget {
         title: const Text('Forum Anonim'),
         centerTitle: true,
       ),
-      body: Consumer<ForumProvider>(
+      body: Consumer<AnonymForumProvider>(
         builder: (context, prov, _) {
           final posts = prov.posts;
           return ListView.builder(
@@ -50,40 +50,29 @@ class AnonymForumScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  prov.toggleLike(p.id);
-                                },
-                                icon: const Icon(Icons.favorite_border),
-                              ),
-                              Text('${p.likes}'),
-                              const SizedBox(width: 16),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => DetailScreen(postId: p.id)),
-                                  );
-                                },
-                                icon: const Icon(Icons.comment_outlined),
-                              ),
-                              Text('${p.comments.length}'),
-                            ],
-                          ),
                           IconButton(
                             onPressed: () {
-                              // quick open detail
+                              prov.toggleLike(p.id);
+                            },
+                            icon: Icon(
+                              p.isLiked ? Icons.favorite : Icons.favorite_border,
+                              color: p.isLiked ? Colors.red : null,
+                            ),
+                          ),
+                          Text('${p.likes}'),
+                          const SizedBox(width: 16),
+                          IconButton(
+                            onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (_) => DetailScreen(postId: p.id)),
+                                MaterialPageRoute(builder: (_) => DetailCommentScreen(postId: p.id)),
                               );
                             },
-                            icon: const Icon(Icons.more_horiz),
+                            icon: const Icon(Icons.comment_outlined),
                           ),
+                          Text('${p.comments.length}'),
                         ],
                       ),
                     ],
@@ -94,32 +83,7 @@ class AnonymForumScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const MakePostScreen()));
-        },
-        child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            IconButton(onPressed: null, icon: Icon(Icons.home)),
-            IconButton(onPressed: null, icon: Icon(Icons.group)),
-            SizedBox(width: 48), // space for FAB
-            IconButton(onPressed: null, icon: Icon(Icons.chat_bubble)),
-            IconButton(onPressed: null, icon: Icon(Icons.person)),
-          ],
-        ),
-      ),
+      
     );
   }
 }

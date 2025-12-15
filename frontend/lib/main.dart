@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 // Provider
 import 'features/7_anonym_forum/providers/anonym_forum_provider.dart';
 
-// Screen Pertama yang ingin kamu tampilkan
-import 'features/7_anonym_forum/screens/anonym_forum_screen.dart';
+// Navigation
+import 'navigation/navigation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ForumProvider()),
+        ChangeNotifierProvider(create: (_) => AnonymForumProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -26,9 +26,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           fontFamily: "Poppins",
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.black,
+            brightness: Brightness.light,
+          ),
         ),
-        home: const AnonymForumScreen(),
+        home: const MainNavigation(initialIndex: 0), // ⬅️ SATU-SATUNYA Scaffold utama
       ),
     );
   }

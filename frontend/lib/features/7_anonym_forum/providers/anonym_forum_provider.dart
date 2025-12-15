@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import '../model/forum_model.dart';
 import 'dart:math';
 
-class ForumProvider extends ChangeNotifier {
+class AnonymForumProvider extends ChangeNotifier {
   final List<Post> _posts = [];
 
   List<Post> get posts => List.unmodifiable(_posts.reversed); // newest first
 
   final Random _rnd = Random();
 
-  ForumProvider() {
+  AnonymForumProvider() {
     // dummy initial data
     _seedDummy();
   }
@@ -47,8 +47,15 @@ class ForumProvider extends ChangeNotifier {
 
   void toggleLike(String postId) {
     final idx = _posts.indexWhere((p) => p.id == postId);
-    if (idx == -1) return;
-    _posts[idx].likes += 1; // simple: only increment (no unlike logic for demo)
+    if (idx ==  -1) return;
+    final post = _posts[idx];
+    if (post.isLiked) {
+      post.likes--;
+      post.isLiked = false;
+      } else {
+      post.likes++;
+      post.isLiked = true;
+      } // simple: only increment (no unlike logic for demo)
     notifyListeners();
   }
 
