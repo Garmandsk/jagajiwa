@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:frontend/navigation/navigation.dart';
+import 'package:frontend/app/widgets/navigation.dart';
 import 'package:provider/provider.dart';
 import '../providers/anonym_forum_provider.dart';
 import '../model/forum_model.dart';
@@ -29,49 +29,51 @@ class _DetailCommentScreenState extends State<DetailCommentScreen> {
       body: Consumer<AnonymForumProvider>(builder: (context, prov, _) {
         final post = prov.posts.firstWhere((p) => p.id == widget.postId);
         return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(child: Text(post.author[0])),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(post.author, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 6),
-                        Text(post.createdAt.toString()),
-                      ],
-                    )
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(post.content, style: const TextStyle(fontSize: 16)),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        prov.toggleLike(post.id);
-                      },
-                      icon: Icon(
-                        post.isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: post.isLiked ? Colors.red : null,
-                      ),),
-                    Text('${post.likes}'),
-                    const SizedBox(width: 16),
-                  ],
-                ),
-                const Divider(),
-                const Text('Balasan', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                ...post.comments.map((c) => CommentWidget(comment: c, post: post, depth: 0, replyingToAuthor: null)).toList(),
-                const SizedBox(height: 20),
-                _buildNewCommentBox(post.id),
-              ],
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(child: Text(post.author[0])),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(post.author, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 6),
+                          Text(post.createdAt.toString()),
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(post.content, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          prov.toggleLike(post.id);
+                        },
+                        icon: Icon(
+                          post.isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: post.isLiked ? Colors.red : null,
+                        ),),
+                      Text('${post.likes}'),
+                      const SizedBox(width: 16),
+                    ],
+                  ),
+                  const Divider(),
+                  const Text('Balasan', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  ...post.comments.map((c) => CommentWidget(comment: c, post: post, depth: 0, replyingToAuthor: null)).toList(),
+                  const SizedBox(height: 20),
+                  _buildNewCommentBox(post.id),
+                ],
+              ),
             ),
           ),
         );
@@ -92,7 +94,7 @@ class _DetailCommentScreenState extends State<DetailCommentScreen> {
           onPressed: () {
             final txt = _newCommentController.text.trim();
             if (txt.isEmpty) return;
-            Provider.of<AnonymForumProvider>(context, listen: false).addComment(postId, 'Anon', txt);
+            Provider.of<AnonymForumProvider>(context, listen: false).addComment(postId, txt);
             _newCommentController.clear();
           },
           icon: const Icon(Icons.send),
@@ -197,7 +199,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       onPressed: () {
                         final txt = _getReplyController(c.id).text.trim();
                         if (txt.isEmpty) return;
-                        Provider.of<AnonymForumProvider>(context, listen: false).addReply(widget.post.id, c.id, 'Anon', txt);
+                        Provider.of<AnonymForumProvider>(context, listen: false).addReply(widget.post.id, c.id, txt);
                         _getReplyController(c.id).clear();
                         setState(() {
                           _activeReplyFor = null;
