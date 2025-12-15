@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/app/theme/app_theme.dart';
 import 'package:frontend/core/models/article_model.dart';
+import 'package:frontend/core/models/profile_model.dart';
 import 'package:frontend/core/utils/knowledge_category_helper.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -21,11 +24,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final profileProvider = context.read<ProfileProvider>();
-    final bool isFavorited = profileProvider.profile?.favorite_articles_id.contains(widget.article.knowledge_article_id) ?? false;
-    print("article_detail_screen.dart: ${profileProvider.profile!.favorite_articles_id}");
-    print("article_detail_screen.dart: ${widget.article.knowledge_article_id}");
-    print("article_detail_screen.dart: ${isFavorited}");
-
+    
     return Scaffold(      
       body: CustomScrollView(
         slivers: [
@@ -51,15 +50,10 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.1),
+                  backgroundColor: Colors.white.withAlpha(25),
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.filter_list, 
-                      color: Colors.white
-                    ),
-                    onPressed: () {
-                      // Tambahkan logika filter/sort di sini
-                    },
+                    icon: FaIcon(FontAwesomeIcons.dice, color: Colors.white),
+                    onPressed: () => context.push("/loss-simulation"), 
                   ),
                 ),
               ),
@@ -129,12 +123,22 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                         ),
                         Row(
                           children: [
-                            IconButton(
-                              icon: Icon(
-                                isFavorited ? Icons.favorite : Icons.favorite_border_outlined,
-                                color: isFavorited ? Colors.red : Colors.black,
-                              ),
-                              onPressed: () => profileProvider.toggleArticleFavorite(widget.article.knowledge_article_id),
+                            Consumer<ProfileProvider>(
+                              builder: (context, profileProvider, child){
+                                final bool isFavorited = profileProvider.profile?.favorite_articles_id.contains(widget.article.knowledge_article_id) ?? false;
+
+                                print("article_detail_screen.dart: favorit artikel id: ${profileProvider  .profile!.favorite_articles_id}");
+                                print("article_detail_screen.dart: artikel id: ${widget.article.knowledge_article_id}");                                
+                                print("article_detail_screen.dart: isFavorited: $isFavorited");
+
+                                return IconButton(
+                                  icon: Icon(
+                                    isFavorited ? Icons.favorite : Icons.favorite_border_outlined,
+                                    color: isFavorited ? Colors.red : Colors.black,
+                                  ),
+                                  onPressed: () => profileProvider.toggleArticleFavorite(widget.article.knowledge_article_id),
+                                );
+                              },                              
                             ),
                             IconButton(
                               icon: const Icon(Icons.share),

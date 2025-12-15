@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/features/5_knowledge_center/providers/knowledge_provider.dart';
@@ -67,10 +68,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
             child: CircleAvatar(
               backgroundColor: Colors.white.withOpacity(0.1),
               child: IconButton(
-                icon: const Icon(Icons.filter_list, color: Colors.white),
-                onPressed: () {
-                  // Tambahkan logika filter/sort di sini
-                },
+                icon: FaIcon(FontAwesomeIcons.dice, color: Colors.white),
+                onPressed: () => context.push("/loss-simulation"), 
               ),
             ),
           ),
@@ -81,6 +80,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         child: Column(
           children: [
             // 2. TOGGLE BUTTON KUSTOM
+            const SizedBox(height:20),
             Container(
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.3),
@@ -99,10 +99,17 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 30),
 
-            // 3. SEARCH BAR KUSTOM
-            Card(
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.4), // Warna garis luar
+                  width: 1.5, // Ketebalan garis luar
+                ),
+              ),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
@@ -115,13 +122,13 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                   ),
                 ),
                 onChanged: (query) {
-                  // Update query pencarian di provider
                   Provider.of<KnowledgeProvider>(context, listen: false)
-                      .updateSearchQuery(query);
+                        .updateSearchQuery(query);
+                  
                 },
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 30),
 
             // 4. DAFTAR KONTEN
             Expanded(
@@ -301,7 +308,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
           _showVideoPlayerModal(context, videoId);
         },
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(40),
           child: Card( // Gunakan Card agar konsisten dengan tema
             child: Stack(
               alignment: Alignment.center,
@@ -377,7 +384,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 25),
                   YoutubePlayer(
                     controller: controller,
                     showVideoProgressIndicator: true,

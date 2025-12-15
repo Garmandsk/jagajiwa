@@ -14,9 +14,21 @@ class ProfileProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  void clearData() {
+    _profile = null; // Hapus data profil dari memori
+    _errorMessage = null;
+    notifyListeners(); // Beritahu UI bahwa data sudah kosong
+  }
+
   // --- FUNGSI PENGAMBILAN DATA PROFIL (DINAMIS) ---
-  /*
   Future<void> fetchProfile() async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    if (_profile != null && _profile!.profile_id != user.id) {
+      _profile = null; 
+    }
+
     // Jangan fetch ulang jika data sudah ada
     if (_profile != null) return; 
 
@@ -50,7 +62,8 @@ class ProfileProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-  */
+  
+  /*
    Future<void> fetchProfile() async {
     _isLoading = true;
     _errorMessage = null;
@@ -72,6 +85,7 @@ class ProfileProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+  */
 
   // --- FUNGSI GENERATE NAMA (SUDAH BAGUS) ---
   Future<String?> generateNewAnoname() async {
@@ -109,8 +123,12 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> toggleArticleFavorite(String articleId) async {
     if (_profile == null) return;
 
+    print("profile_provider.dart: data profile: $_profile");
+
     // Buat salinan list favorit
     final List<String> currentFavorites = List<String>.from(_profile!.favorite_articles_id);
+
+    print("profile_provider.dart: artikel favorit: $currentFavorites");
 
     if (currentFavorites.contains(articleId)) {
       currentFavorites.remove(articleId);

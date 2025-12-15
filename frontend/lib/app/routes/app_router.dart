@@ -1,10 +1,11 @@
 import 'package:frontend/features/8_chatbot/screens/chatbot_screen.dart';
+import 'package:frontend/features/6_loss_simulation/screens/loss_simulation_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/app/widgets/barrel.dart';
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/profile', // Lokasi awal saat aplikasi dibuka
+    initialLocation: '/sign-in', // Lokasi awal saat aplikasi dibuka
     routes: [
       GoRoute(
         path: '/splash',
@@ -16,7 +17,7 @@ class AppRouter {
       ),    
       GoRoute(
         path: '/sign-up',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const SignUpScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/home',
@@ -24,15 +25,15 @@ class AppRouter {
       ),   
       GoRoute(
         path: '/quiz',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/quiz-start',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/quiz-result',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/knowledge',
@@ -49,11 +50,11 @@ class AppRouter {
       ),       
       GoRoute(
         path: '/loss-simulation',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const LossSimulationScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/anonym-forum',
-        builder: (context, state) => const SignInScreen(), // Ganti dengan widget Anda
+        builder: (context, state) => const HomeScreen(), // Ganti dengan widget Anda
       ), 
       GoRoute(
         path: '/chatbot',

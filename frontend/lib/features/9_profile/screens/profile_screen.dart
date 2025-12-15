@@ -23,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isSaving = false;
 
   // --- Fungsi helper tetap sama ---
-  Future<void> _rollNewName() async {
+  Future<void> _rollNewAnoname() async {
     setState(() => _isGenerating = true);
     final profileProvider = context.read<ProfileProvider>();
     final generatedName = await profileProvider.generateNewAnoname();
@@ -125,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : IconButton(
                               icon: const Icon(Icons.sync),
                               tooltip: 'Buat nama baru',
-                              onPressed: _rollNewName,
+                              onPressed: _rollNewAnoname,
                             ),
                     );
                   },
@@ -257,10 +257,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 12),
             TextButton(
-              onPressed: () {
-                Supabase.instance.client.auth.signOut();
+              onPressed: () async {
+                context.read<ProfileProvider>().clearData();
+                await Supabase.instance.client.auth.signOut();
                 // Arahkan kembali ke login setelah logout
-                context.go('/sign-in'); 
+                if (context.mounted) context.go('/sign-in'); 
               },
               child: const Text('Logout', style: TextStyle(color: Colors.red)),
             ),

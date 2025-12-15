@@ -5,6 +5,7 @@ class AppTheme {
   static const Color accentColor = Color(0xFFFFC107); // Contoh: Emas lembut (Amber)
   static const Color darkBackgroundColor = Color(0xFF121212); // Abu-abu sangat tua
   static const Color lightCardColor = Color(0xFFFFFFFF); // Putih bersih untuk kartu
+  static const Color greyku = Color.fromARGB(255, 126, 126, 126);
 
    // Tema Terang (sebagai opsi)
   static final ThemeData lightTheme = ThemeData(
