@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/widgets/navigation.dart';
+import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Home'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Home Screen'),
+            ElevatedButton(
+              onPressed: () => context.push("/anonym-forum"), 
+              child: const Text("Forum Anonim")
+            ),
+            ElevatedButton(
+              onPressed: () => context.push("/profile"), 
+              child: const Text("Profile")
+            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: const MainNavigationBar(
+        currentIndex: 1,
       ),
     );
   }

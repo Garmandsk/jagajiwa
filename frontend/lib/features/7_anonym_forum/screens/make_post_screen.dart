@@ -57,11 +57,11 @@ class _MakePostScreenState extends State<MakePostScreen> {
               children: [
                 Text('${_controller.text.length}/$maxChars'),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final txt = _controller.text.trim();
                     if (txt.isEmpty) return;
-                    Provider.of<AnonymForumProvider>(context, listen: false).createPost('Anon', txt);
-                    Navigator.pop(context);
+                    await Provider.of<AnonymForumProvider>(context, listen: false).createPost(txt);
+                    if (mounted) Navigator.pop(context);
                   },
                   child: const Text('Kirim'),
                 )
