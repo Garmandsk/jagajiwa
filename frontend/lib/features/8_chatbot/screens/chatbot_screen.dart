@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:frontend/features/8_chatbot/widgets/custom_keyboard_layout_widget.dart';
 import 'package:frontend/features/8_chatbot/widgets/chat_message_list_widget.dart';
@@ -34,15 +35,9 @@ class _AIChatBoxScreenState extends State<AIChatBoxScreen> {
       _isLoading = true;
     });
 
-    // --- DATA DARI PYTHON KAMU ---
-    // Base URL dari python: https://belajariai-korea-1-resource.services.ai.azure.com/openai/v1/
-    // Kita tambahkan 'chat/completions' di ujungnya untuk endpoint chat.
-    final String endpoint = 'https://belajariai-korea-1-resource.services.ai.azure.com/openai/v1/chat/completions';
-    
-    final String apiKey = '3zUI4f4n26pp3mWpdbYJJfuImrd6s6NzT9PPKX8sLMtyl8UiVqSKJQQJ99BKACNns7RXJ3w3AAAAACOGQiNa';
-    
-    // Model name dari python: "Phi-4"
-    final String modelName = 'Phi-4';
+    final String endpoint = dotenv.env['AZURE_ENDPOINT'] ?? '';
+    final String apiKey = dotenv.env['AZURE_API_KEY'] ?? '';
+    final String modelName = dotenv.env['AZURE_MODEL_NAME'] ?? '';
 
     try {
       final response = await http.post(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Provider
 import 'features/7_anonym_forum/providers/anonym_forum_provider.dart';
@@ -7,7 +8,8 @@ import 'features/7_anonym_forum/providers/anonym_forum_provider.dart';
 // Navigation
 import 'navigation/navigation.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env"); // Memuat variabel lingkungan dari file .env
   runApp(const MyApp());
 }
 
