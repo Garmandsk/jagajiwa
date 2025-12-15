@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/features/2_auth/providers/auth_provider.dart';
 import 'package:frontend/features/4_quiz/providers/quiz_provider.dart';
 import 'package:frontend/features/5_knowledge_center/providers/knowledge_provider.dart';
+import 'package:frontend/features/7_anonym_forum/providers/anonym_forum_provider.dart';
 import 'package:frontend/features/9_profile/providers/setting_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import './app/routes/app_router.dart';
@@ -65,6 +66,7 @@ class JagaJiwaApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => SettingProvider()),
         ChangeNotifierProvider(create: (_) => QuizProvider()),
+        ChangeNotifierProvider(create: (_) => AnonymForumProvider()),         
       ],
       // Gunakan Consumer<SettingProvider> di sini
       child: Consumer<SettingProvider>(

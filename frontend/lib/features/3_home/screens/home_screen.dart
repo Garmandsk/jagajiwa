@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/widgets/navigation.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +17,6 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 20,
           children: [
             const Text(
               'Selamat datang di Beranda JagaJiwa!',
@@ -29,8 +34,16 @@ class HomeScreen extends StatelessWidget {
               },
               child: const Text('Kuesioner'),
             ),
+   
+            ElevatedButton(
+              onPressed: () => context.push("/anonym-forum"), 
+              child: const Text("Forum Anonim"),
+            ),
           ],
         ),
+      ),
+      bottomNavigationBar: const MainNavigationBar(
+        currentIndex: 1,
       ),
     );
   }
