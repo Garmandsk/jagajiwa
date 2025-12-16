@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/widgets/navigation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart'; // Diperlukan untuk Consumer
-import 'package:frontend/features/9_profile/providers/profile_provider.dart'; // Impor provider
+import 'package:provider/provider.dart';
 
-// --- CUSTOM WIDGET UNTUK KARTU UTAMA ---
+import 'package:frontend/features/9_profile/providers/profile_provider.dart';
+import 'package:frontend/features/5_knowledge_center/providers/knowledge_provider.dart';
+import 'package:frontend/features/5_knowledge_center/widgets/knowledge_list_card.dart';
+import 'package:frontend/core/models/article_model.dart';
+
+import '../../../app/widgets/navigation.dart';
+
+/// ===============================
+/// MAIN CARD WIDGET
+/// ===============================
 class MainCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -20,21 +27,16 @@ class MainCard extends StatelessWidget {
   });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          height: 120, // Ketinggian kartu
-          padding: const EdgeInsets.all(16.0),
+          height: 120,
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,215 +50,192 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    icon,
-                    color: Colors.white.withOpacity(0.8),
-                    size: 28,
-                  ),
-                ],
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Icon(
+                  icon,
+                  color: Colors.white.withOpacity(0.85),
+                  size: 28,
+                ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const MainNavigationBar(
-        currentIndex: 1,
-      ),
     );
   }
 }
 
-// --- SCREEN UTAMA (HOMESCREEN) ---
-
-class HomeScreen extends StatelessWidget {
+/// ===============================
+/// HOME SCREEN
+/// ===============================
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  // Fungsi khusus untuk Bottom Navigation (yang harus menggunakan context.go)
-  void navigateBottomBar(String route, BuildContext context) {
-    context.go(route);
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    /// Fetch artikel untuk rekomendasi
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<KnowledgeProvider>().fetchArticles();
+    });
   }
 
-  // Menggunakan context.push untuk navigasi keluar dari root (home)
-  void navigateTo(String route, BuildContext context) {
+  void _push(String route, BuildContext context) {
     context.push(route);
   }
 
   @override
   Widget build(BuildContext context) {
-    // Warna yang mendekati gambar
-    const Color redCard = Color(0xFF9E2C33);
-    const Color brownCard = Color(0xFF966829);
-    const Color goldCard = Color(0xFFB18838);
+    final theme = Theme.of(context);
 
-    // Di sini kita menggunakan Consumer untuk mendapatkan data profil
+    const redCard = Color(0xFF9E2C33);
+    const brownCard = Color(0xFF966829);
+    const goldCard = Color(0xFFB18838);
+
     return Consumer<ProfileProvider>(
-      builder: (context, profileProvider, child) {
-        // Ambil username, gunakan 'Pengguna' jika belum dimuat atau null
+      builder: (context, profileProvider, _) {
         final username = profileProvider.profile?.username ?? 'Pengguna';
 
         return Scaffold(
-          // 🎯 Latar belakang diubah menjadi HITAM agar teks putih terlihat
-          backgroundColor: Colors.black,
+          backgroundColor: theme.scaffoldBackgroundColor,
+
           body: SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
+            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header: Hai, [Username] - Menggunakan data dari provider
+                /// ================= HEADER =================
                 Text(
                   'Hai, $username',
-                  style: const TextStyle(
-                    fontSize: 30,
+                  style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.colorScheme.onBackground,
                   ),
                 ),
+
+
                 const SizedBox(height: 25),
 
-                // Bagian Kartu Utama 2x2
+                /// ================= MAIN MENU =================
                 Column(
                   children: [
-                    // Baris 1: Kuesioner & Forum Anonim
                     Row(
                       children: [
                         MainCard(
                           title: 'Kuesioner',
                           icon: Icons.assignment,
                           color: redCard,
-                          onTap: () => navigateTo('/quiz-start', context),
+                          onTap: () => _push('/quiz-start', context),
                         ),
                         const SizedBox(width: 15),
                         MainCard(
                           title: 'Forum Anonim',
                           icon: Icons.chat_bubble_outline,
-                          color: redCard.withOpacity(0.8),
-                          onTap: () => navigateTo('/anonym-forum', context),
+                          color: redCard.withOpacity(0.85),
+                          onTap: () => _push('/anonym-forum', context),
                         ),
                       ],
                     ),
                     const SizedBox(height: 15),
-
-                    // Baris 2: Pusat Pengetahuan & AI Chatbot
                     Row(
                       children: [
                         MainCard(
                           title: 'Pusat Pengetahuan',
                           icon: Icons.lightbulb_outline,
                           color: brownCard,
-                          onTap: () => navigateTo('/knowledge', context),
+                          onTap: () => _push('/knowledge', context),
                         ),
                         const SizedBox(width: 15),
                         MainCard(
                           title: 'AI Chatbot',
                           icon: Icons.android,
                           color: goldCard,
-                          onTap: () => navigateTo('/chatbot', context),
+                          onTap: () => _push('/chatbot', context),
                         ),
                       ],
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 30),
 
-                // Rekomendasi Artikel Header
+                /// ================= REKOMENDASI HEADER =================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Rekomendasi Artikel',
-                      style: TextStyle(
-                        fontSize: 20,
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: theme.colorScheme.onBackground,
                       ),
                     ),
+
                     GestureDetector(
-                      onTap: () => navigateTo('/knowledge', context),
-                      child: const Row(
+                      onTap: () => _push('/knowledge', context),
+                      child: Row(
                         children: [
-                          Text('More', style: TextStyle(color: Colors.grey)),
-                          Icon(Icons.chevron_right, color: Colors.grey),
+                          Text(
+                            'More',
+                            style: theme.textTheme.bodyMedium
+                                ?.copyWith(color: theme.hintColor),
+                          ),
+                          Icon(Icons.chevron_right, color: theme.hintColor),
                         ],
                       ),
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 15),
 
-                // Kartu Rekomendasi Artikel (Dummy)
-                Container(
-                  height: 120,
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.black, // Tetap gelap
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.white, size: 24),
-                      SizedBox(height: 8),
-                      Text(
-                        'Yes, one or multiple',
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                      Text(
-                        "I'm experiencing physical pain in different place over my body.",
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                /// ================= REKOMENDASI LIST (SAMA SEPERTI KNOWLEDGE) =================
+                Consumer<KnowledgeProvider>(
+                  builder: (context, provider, _) {
+                    if (provider.isLoading) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final List<Article> articles =
+                    provider.articles.take(3).toList();
+
+                    if (articles.isEmpty) {
+                      return const Text('Belum ada artikel');
+                    }
+
+                    return Column(
+                      children: articles.map((article) {
+                        return KnowledgeListCard(
+                          title: article.title,
+                          subtitle: article.subtitle,
+                          image_url: article.image_url ?? '',
+                          icon: Icons.article_outlined,
+                          onTap: () => context.push(
+                            '/knowledge/article-detail',
+                            extra: article,
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
               ],
             ),
           ),
 
-          // Floating Action Button (+) di bagian bawah
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              navigateTo('/loss-simulation', context);
-            },
-            backgroundColor: Colors.black,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add, color: Colors.white, size: 30),
-          ),
-
-          // Bottom Navigation Bar
-            bottomNavigationBar: BottomAppBar(
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.home, color: Colors.grey),
-                    onPressed: () => navigateBottomBar('/home', context),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.group, color: Colors.grey),
-                    onPressed: () => navigateBottomBar('/anonym-forum', context),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add_circle, color: Colors.grey, size: 30),
-                    onPressed: () => navigateBottomBar('/quiz', context),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.menu_book, color: Colors.black),
-                    onPressed: () => navigateBottomBar('/knowledge', context),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.person, color: Colors.grey),
-                    onPressed: () => navigateBottomBar('/profile', context),
-                  ),
-                ],
-              ),
-            ),
+          bottomNavigationBar: const MainNavigationBar(currentIndex: 0),
         );
       },
     );

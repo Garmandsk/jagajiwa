@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/quiz_result_helper.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Jangan lupa add intl di pubspec.yaml
+import 'package:intl/intl.dart';
+import '../../../app/widgets/navigation.dart';
 import '../providers/quiz_provider.dart';
-import 'quiz_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -17,7 +17,6 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   void initState() {
     super.initState();
-    // Ambil data saat layar dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<QuizProvider>().fetchHistory();
     });
@@ -26,7 +25,8 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Sesuaikan warna background app kamu
+      backgroundColor: Colors.white,
+
       appBar: AppBar(
         title: const Text(
           "Kuesioner Kesehatan",
@@ -35,17 +35,18 @@ class _QuizScreenState extends State<QuizScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- HEADER CARD ---
+            // ===== HEADER CARD =====
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E2A48), // Warna tema
+                color: const Color(0xFF1E2A48),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -84,7 +85,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       onPressed: () {
-                        context.go("/quiz/quiz-start");
+                        context.go('/quiz/quiz-start');
                       },
                       child: const Text(
                         "Mulai Tes Sekarang",
@@ -103,7 +104,7 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
             const SizedBox(height: 10),
 
-            // --- LIST RIWAYAT ---
+            // ===== HISTORY LIST =====
             Expanded(
               child: Consumer<QuizProvider>(
                 builder: (context, provider, _) {
@@ -112,10 +113,10 @@ class _QuizScreenState extends State<QuizScreen> {
                   }
 
                   if (provider.history.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(Icons.history, size: 50, color: Colors.grey),
                           SizedBox(height: 10),
                           Text(
@@ -131,10 +132,10 @@ class _QuizScreenState extends State<QuizScreen> {
                     itemCount: provider.history.length,
                     itemBuilder: (context, index) {
                       final item = provider.history[index];
-                      final date = DateTime.parse(item['created_at']).toLocal();
-                      final formattedDate = DateFormat(
-                        'dd MMM yyyy, HH:mm',
-                      ).format(date);
+                      final date =
+                      DateTime.parse(item['created_at']).toLocal();
+                      final formattedDate =
+                      DateFormat('dd MMM yyyy, HH:mm').format(date);
                       final risk = item['risk_level'] ?? '-';
 
                       return Container(
@@ -163,10 +164,9 @@ class _QuizScreenState extends State<QuizScreen> {
                                   QuizResultHelper.getQuizResultText(risk),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: QuizResultHelper.getQuizResultColor(
-                                      risk,
-                                    ),
                                     fontSize: 16,
+                                    color: QuizResultHelper
+                                        .getQuizResultColor(risk),
                                   ),
                                 ),
                               ],
@@ -174,17 +174,16 @@ class _QuizScreenState extends State<QuizScreen> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: QuizResultHelper.getQuizResultColor(
-                                  risk,
-                                ).withOpacity(0.1),
+                                color: QuizResultHelper
+                                    .getQuizResultColor(risk)
+                                    .withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 QuizResultHelper.getQuizResultIcon(risk),
                                 size: 14,
-                                color: QuizResultHelper.getQuizResultColor(
-                                  risk,
-                                ),
+                                color: QuizResultHelper
+                                    .getQuizResultColor(risk),
                               ),
                             ),
                           ],
@@ -198,6 +197,9 @@ class _QuizScreenState extends State<QuizScreen> {
           ],
         ),
       ),
+
+      // ===== BOTTOM NAVIGATION =====
+      bottomNavigationBar: const MainNavigationBar(currentIndex: 2),
     );
   }
 }

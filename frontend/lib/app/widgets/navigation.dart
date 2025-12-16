@@ -9,66 +9,58 @@ class MainNavigationBar extends StatelessWidget {
     required this.currentIndex,
   });
 
-  void _onTap(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        context.push('/home');
-        break;
-      case 1:
-        context.push('/anonym-forum');
-        break;
-      case 2:
-        context.push('/chatbot');
-        break;
-      case 3:
-        context.push('/profile');
-        break;
-      case 4:      
-    }
+  void _navigate(BuildContext context, String route) {
+    context.go(route);
+  }
+
+  Color _iconColor(int index) {
+    return currentIndex == index ? Colors.black : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: tambah post
-        },
-        backgroundColor: Colors.black,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: 32, color: Colors.white),
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFFD9D9D9),
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _navItem(context, 0, 'assets/images/home.png'),
-              _navItem(context, 1, 'assets/images/group.png'),
-              const SizedBox(width: 40),
-              _navItem(context, 2, 'assets/images/generative.png'),
-              _navItem(context, 3, 'assets/images/user.png'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    return BottomAppBar(
+      color: Colors.white,
+      child: SizedBox(
+        height: 64,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            // 🏠 Home
+            IconButton(
+              icon: Icon(Icons.home, color: _iconColor(0)),
+              onPressed: () => _navigate(context, '/home'),
+            ),
 
-  Widget _navItem(BuildContext context, int index, String asset) {
-    return IconButton(
-      onPressed: () => _onTap(context, index),
-      icon: ImageIcon(
-        AssetImage(asset),
-        color: currentIndex == index
-            ? Colors.black
-            : Colors.black.withOpacity(0.6),
+            // 👥 Forum Anonim
+            IconButton(
+              icon: Icon(Icons.group, color: _iconColor(1)),
+              onPressed: () => _navigate(context, '/anonym-forum'),
+            ),
+
+// 🎯 Quiz
+            IconButton(
+              icon: Icon(
+                Icons.assignment_turned_in, // ✅ IKON QUIZ
+                size: 28,
+                color: _iconColor(2),
+              ),
+              onPressed: () => _navigate(context, '/quiz'),
+            ),
+
+            // 📚 Knowledge
+            IconButton(
+              icon: Icon(Icons.menu_book, color: _iconColor(3)),
+              onPressed: () => _navigate(context, '/knowledge'),
+            ),
+
+            // 👤 Profile
+            IconButton(
+              icon: Icon(Icons.person, color: _iconColor(4)),
+              onPressed: () => _navigate(context, '/profile'),
+            ),
+          ],
+        ),
       ),
     );
   }
