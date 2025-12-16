@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/widgets/navigation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart'; // Diperlukan untuk Consumer
 import 'package:frontend/features/9_profile/providers/profile_provider.dart'; // Impor provider
@@ -18,6 +19,11 @@ class MainCard extends StatelessWidget {
     required this.onTap,
   });
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -55,6 +61,9 @@ class MainCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: const MainNavigationBar(
+        currentIndex: 1,
       ),
     );
   }
