@@ -220,25 +220,34 @@ class HomeScreen extends StatelessWidget {
           ),
 
           // Bottom Navigation Bar
-          bottomNavigationBar: BottomAppBar(
-            color: Colors.white,
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                // Home (Highlight: Hitam)
-                IconButton(icon: const Icon(Icons.home, color: Colors.black), onPressed: () => navigateBottomBar('/home', context)),
-                // Komunitas (Forum Anonim)
-                IconButton(icon: const Icon(Icons.group, color: Colors.grey), onPressed: () => navigateBottomBar('/anonym-forum', context)),
-                const SizedBox(width: 40), // Jarak untuk FAB
-                // Artikel (Knowledge)
-                IconButton(icon: const Icon(Icons.menu_book, color: Colors.grey), onPressed: () => navigateBottomBar('/knowledge', context)),
-                // Profil
-                IconButton(icon: const Icon(Icons.person, color: Colors.grey), onPressed: () => navigateBottomBar('/profile', context)),
-              ],
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.home, color: Colors.grey),
+                    onPressed: () => navigateBottomBar('/home', context),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.group, color: Colors.grey),
+                    onPressed: () => navigateBottomBar('/anonym-forum', context),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle, color: Colors.grey, size: 30),
+                    onPressed: () => navigateBottomBar('/quiz', context),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.menu_book, color: Colors.black),
+                    onPressed: () => navigateBottomBar('/knowledge', context),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.person, color: Colors.grey),
+                    onPressed: () => navigateBottomBar('/profile', context),
+                  ),
+                ],
+              ),
             ),
-          ),
         );
       },
     );

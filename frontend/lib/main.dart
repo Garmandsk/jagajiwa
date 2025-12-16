@@ -54,14 +54,14 @@ class JagaJiwaApp extends StatelessWidget {
   const JagaJiwaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create:  (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),   
-        ChangeNotifierProvider(create: (_) => SettingProvider()),         
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => SettingProvider()),
       ],
       // Gunakan Consumer<SettingProvider> di sini
       child: Consumer<SettingProvider>(
@@ -69,8 +69,8 @@ class JagaJiwaApp extends StatelessWidget {
           return MaterialApp.router(
             title: 'JagaJiwa',
             theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,      
-            themeMode: settingProvider.themeMode,      
+            darkTheme: AppTheme.darkTheme,
+            themeMode: settingProvider.themeMode,
             routerConfig: AppRouter.router,
             debugShowCheckedModeBanner: false,
           );

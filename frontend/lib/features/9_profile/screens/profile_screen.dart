@@ -269,11 +269,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: const Icon(Icons.add, color: Colors.white, size: 30),
       ),
 
-      // 🎯 BOTTOM NAVIGATION BAR (Menggantikan tombol Beranda/Knowledge)
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
@@ -287,15 +284,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: const Icon(Icons.group, color: Colors.grey),
                 onPressed: () => navigateBottomBar('/anonym-forum')
             ),
-            const SizedBox(width: 40), // Jarak untuk FAB
-            // Artikel (Knowledge)
+
+            // 🎯 TOMBOL BARU: QUIZ/LOSS SIMULATION
+            // Menggantikan SizedBox(width: 40)
             IconButton(
-                icon: const Icon(Icons.menu_book, color: Colors.grey),
+                icon: const Icon(Icons.add_circle, color: Colors.grey, size: 30), // Menggunakan ikon lain, misalnya add_circle
+                // Asumsi tombol ini mengarah ke halaman kuis
+                onPressed: () => navigateBottomBar('/quiz') // Ganti '/quiz-start' dengan rute yang benar
+            ),
+
+            // Artikel (Knowledge) - Highlighted atau Greyed
+            IconButton(
+                icon: const Icon(Icons.menu_book, color: Colors.black), // Contoh: Di ProfileScreen ini seharusnya grey
                 onPressed: () => navigateBottomBar('/knowledge')
             ),
-            // Profil - DIBUAT HIGHLIGHT (HITAM)
+            // Profil
             IconButton(
-                icon: const Icon(Icons.person, color: Colors.black), // <-- HIGHLIGHT DI SINI
+                icon: const Icon(Icons.person, color: Colors.grey),
                 onPressed: () => navigateBottomBar('/profile')
             ),
           ],

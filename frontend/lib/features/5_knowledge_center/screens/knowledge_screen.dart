@@ -197,21 +197,38 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
       // 🎯 BOTTOM NAVIGATION BAR
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            // Home
-            IconButton(icon: const Icon(Icons.home, color: Colors.grey), onPressed: () => navigateBottomBar('/home')),
-            // Komunitas (Forum Anonim)
-            IconButton(icon: const Icon(Icons.group, color: Colors.grey), onPressed: () => navigateBottomBar('/anonym-forum')),
-            const SizedBox(width: 40), // Jarak untuk FAB
-            // Artikel (Knowledge) - Highlighted
-            IconButton(icon: const Icon(Icons.menu_book, color: Colors.black), onPressed: () => navigateBottomBar('/knowledge')),
-            // Profil
-            IconButton(icon: const Icon(Icons.person, color: Colors.grey), onPressed: () => navigateBottomBar('/profile')),
+          color: Colors.white,
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+          // Home
+          IconButton(
+          icon: const Icon(Icons.home, color: Colors.grey),
+          onPressed: () => navigateBottomBar('/home')
+      ),
+      // Komunitas (Forum Anonim)
+      IconButton(
+          icon: const Icon(Icons.group, color: Colors.grey),
+          onPressed: () => navigateBottomBar('/anonym-forum')
+      ),
+
+      // 🎯 TOMBOL BARU: QUIZ/LOSS SIMULATION
+      // Menggantikan SizedBox(width: 40)
+      IconButton(
+          icon: const Icon(Icons.add_circle, color: Colors.grey, size: 30), // Menggunakan ikon lain, misalnya add_circle
+          // Asumsi tombol ini mengarah ke halaman kuis
+          onPressed: () => navigateBottomBar('/quiz') // Ganti '/quiz-start' dengan rute yang benar
+      ),
+
+      // Artikel (Knowledge) - Highlighted atau Greyed
+      IconButton(
+          icon: const Icon(Icons.menu_book, color: Colors.black), // Contoh: Di ProfileScreen ini seharusnya grey
+          onPressed: () => navigateBottomBar('/knowledge')
+      ),
+      // Profil
+      IconButton(
+        icon: const Icon(Icons.person, color: Colors.grey),
+        onPressed: () => navigateBottomBar('/profile')),
           ],
         ),
       ),
