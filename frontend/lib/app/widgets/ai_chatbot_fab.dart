@@ -20,4 +20,3 @@ class AiChatbotFab extends StatelessWidget {
     );
   }
 }
-

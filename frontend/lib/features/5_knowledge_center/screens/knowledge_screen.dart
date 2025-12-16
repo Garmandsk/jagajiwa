@@ -299,5 +299,3 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     ).whenComplete(controller.dispose);
   }
 }
-
-

@@ -148,4 +148,3 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
     );
   }
 }
-

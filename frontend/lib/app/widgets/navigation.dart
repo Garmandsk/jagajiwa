@@ -60,5 +60,3 @@ class MainNavigationBar extends StatelessWidget {
     );
   }
 }
-
-

@@ -286,4 +286,3 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
     );
   }
 }
-
