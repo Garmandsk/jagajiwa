@@ -7,11 +7,9 @@ import 'package:frontend/features/5_knowledge_center/providers/knowledge_provide
 import 'package:frontend/features/5_knowledge_center/widgets/knowledge_list_card.dart';
 import 'package:frontend/core/models/article_model.dart';
 
+import '../../../app/widgets/ai_chatbot_fab.dart';
 import '../../../app/widgets/navigation.dart';
 
-/// ===============================
-/// MAIN CARD WIDGET
-/// ===============================
 class MainCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -66,9 +64,6 @@ class MainCard extends StatelessWidget {
   }
 }
 
-/// ===============================
-/// HOME SCREEN
-/// ===============================
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -111,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// ================= HEADER =================
                 Text(
                   'Hai, $username',
                   style: theme.textTheme.headlineMedium?.copyWith(
@@ -120,10 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-
                 const SizedBox(height: 25),
-
-                /// ================= MAIN MENU =================
                 Column(
                   children: [
                     Row(
@@ -132,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           title: 'Kuesioner',
                           icon: Icons.assignment,
                           color: redCard,
-                          onTap: () => _push('/quiz-start', context),
+                          onTap: () => _push('/quiz', context),
                         ),
                         const SizedBox(width: 15),
                         MainCard(
@@ -165,8 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 const SizedBox(height: 30),
-
-                /// ================= REKOMENDASI HEADER =================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -177,7 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: theme.colorScheme.onBackground,
                       ),
                     ),
-
                     GestureDetector(
                       onTap: () => _push('/knowledge', context),
                       child: Row(
@@ -195,8 +183,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 const SizedBox(height: 15),
-
-                /// ================= REKOMENDASI LIST (SAMA SEPERTI KNOWLEDGE) =================
                 Consumer<KnowledgeProvider>(
                   builder: (context, provider, _) {
                     if (provider.isLoading) {
@@ -208,8 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
 
-                    final List<Article> articles =
-                    provider.articles.take(3).toList();
+                    final articles = provider.articles.take(3).toList();
 
                     if (articles.isEmpty) {
                       return const Text('Belum ada artikel');
@@ -236,6 +221,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           bottomNavigationBar: const MainNavigationBar(currentIndex: 0),
+
+          floatingActionButton: const AiChatbotFab(),
         );
       },
     );

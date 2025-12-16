@@ -3,6 +3,8 @@ import 'package:frontend/core/utils/quiz_result_helper.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+
+import '../../../app/widgets/ai_chatbot_fab.dart';
 import '../../../app/widgets/navigation.dart';
 import '../providers/quiz_provider.dart';
 
@@ -24,20 +26,27 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+
+      // ================= APP BAR (SAMA DENGAN PROFIL) =================
       appBar: AppBar(
         title: const Text(
           "Kuesioner Kesehatan",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        centerTitle: true,
         elevation: 0,
+        backgroundColor: theme.scaffoldBackgroundColor,
+        foregroundColor: isDark ? Colors.white : Colors.black,
       ),
 
+      // ================= BODY =================
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,7 +59,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.15),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
@@ -84,9 +93,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      onPressed: () {
-                        context.go('/quiz/quiz-start');
-                      },
+                      onPressed: () => context.go('/quiz/quiz-start'),
                       child: const Text(
                         "Mulai Tes Sekarang",
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -98,10 +105,16 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
 
             const SizedBox(height: 30),
-            const Text(
+
+            // ===== TITLE =====
+            Text(
               "Riwayat Tes Kamu",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
+
             const SizedBox(height: 10),
 
             // ===== HISTORY LIST =====
@@ -113,15 +126,25 @@ class _QuizScreenState extends State<QuizScreen> {
                   }
 
                   if (provider.history.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.history, size: 50, color: Colors.grey),
-                          SizedBox(height: 10),
+                          Icon(
+                            Icons.history,
+                            size: 50,
+                            color: isDark
+                                ? Colors.white54
+                                : Colors.black38,
+                          ),
+                          const SizedBox(height: 10),
                           Text(
                             "Belum ada riwayat tes.",
-                            style: TextStyle(color: Colors.grey),
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white70
+                                  : Colors.black54,
+                            ),
                           ),
                         ],
                       ),
@@ -138,13 +161,22 @@ class _QuizScreenState extends State<QuizScreen> {
                       DateFormat('dd MMM yyyy, HH:mm').format(date);
                       final risk = item['risk_level'] ?? '-';
 
+                      final riskColor =
+                      QuizResultHelper.getQuizResultColor(risk);
+
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.grey[50],
+                          color: isDark
+                              ? Colors.grey[900]
+                              : Colors.grey[100],
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey[200]!),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.grey[800]!
+                                : Colors.grey[300]!,
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,9 +186,11 @@ class _QuizScreenState extends State<QuizScreen> {
                               children: [
                                 Text(
                                   formattedDate,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.grey,
+                                    color: isDark
+                                        ? Colors.white60
+                                        : Colors.black54,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -165,8 +199,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
-                                    color: QuizResultHelper
-                                        .getQuizResultColor(risk),
+                                    color: riskColor,
                                   ),
                                 ),
                               ],
@@ -174,16 +207,13 @@ class _QuizScreenState extends State<QuizScreen> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: QuizResultHelper
-                                    .getQuizResultColor(risk)
-                                    .withOpacity(0.1),
+                                color: riskColor.withOpacity(0.15),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 QuizResultHelper.getQuizResultIcon(risk),
                                 size: 14,
-                                color: QuizResultHelper
-                                    .getQuizResultColor(risk),
+                                color: riskColor,
                               ),
                             ),
                           ],
@@ -198,7 +228,8 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
       ),
 
-      // ===== BOTTOM NAVIGATION =====
+      // ================= FAB & NAVBAR =================
+      floatingActionButton: const AiChatbotFab(),
       bottomNavigationBar: const MainNavigationBar(currentIndex: 2),
     );
   }

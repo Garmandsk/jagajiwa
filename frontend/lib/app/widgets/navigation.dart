@@ -26,35 +26,30 @@ class MainNavigationBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            // 🏠 Home
             IconButton(
               icon: Icon(Icons.home, color: _iconColor(0)),
               onPressed: () => _navigate(context, '/home'),
             ),
 
-            // 👥 Forum Anonim
             IconButton(
-              icon: Icon(Icons.group, color: _iconColor(1)),
+              icon: Icon(Icons.chat_bubble, color: _iconColor(1)),
               onPressed: () => _navigate(context, '/anonym-forum'),
             ),
 
-// 🎯 Quiz
             IconButton(
               icon: Icon(
-                Icons.assignment_turned_in, // ✅ IKON QUIZ
+                Icons.assignment, //
                 size: 28,
                 color: _iconColor(2),
               ),
               onPressed: () => _navigate(context, '/quiz'),
             ),
 
-            // 📚 Knowledge
             IconButton(
-              icon: Icon(Icons.menu_book, color: _iconColor(3)),
+              icon: Icon(Icons.lightbulb, color: _iconColor(3)),
               onPressed: () => _navigate(context, '/knowledge'),
             ),
 
-            // 👤 Profile
             IconButton(
               icon: Icon(Icons.person, color: _iconColor(4)),
               onPressed: () => _navigate(context, '/profile'),

@@ -11,6 +11,7 @@ import 'package:frontend/core/models/video_model.dart';
 import 'package:frontend/core/models/infographic_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../../../app/widgets/ai_chatbot_fab.dart';
 import '../../../app/widgets/navigation.dart';
 
 class KnowledgeScreen extends StatefulWidget {
@@ -43,20 +44,52 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       // ================= APP BAR =================
       appBar: AppBar(
-        title: const Text('Pusat Pengetahuan'),
+        title: const Text(
+          'Pusat Pengetahuan',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
+
         actions: [
           Padding(
             padding: const EdgeInsets.all(8),
-            child: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.1),
-              child: IconButton(
-                icon: const FaIcon(FontAwesomeIcons.dice),
-                onPressed: () => context.push('/loss-simulation'),
-              ),
+            child: Builder(
+              builder: (context) {
+                final isDark =
+                    Theme.of(context).brightness == Brightness.dark;
+
+                final iconColor = isDark
+                    ? Colors.amber
+                    : Theme.of(context).colorScheme.onSurface;
+
+                final bgColor = isDark
+                    ? Colors.amber.withOpacity(0.2)
+                    : Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withOpacity(0.15);
+
+                return CircleAvatar(
+                  backgroundColor: bgColor,
+                  child: IconButton(
+                    splashRadius: 22,
+                    icon: FaIcon(
+                      FontAwesomeIcons.dice,
+                      size: 16,
+                      color: iconColor,
+                    ),
+                    onPressed: () => context.push('/loss-simulation'),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -169,7 +202,10 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         ),
       ),
 
-      // ================= NAVBAR (PALING BAWAH) =================
+      // ================= FLOATING AI CHATBOT BUTTON =================
+      floatingActionButton: const AiChatbotFab(),
+
+      // ================= NAVBAR =================
       bottomNavigationBar: const MainNavigationBar(currentIndex: 3),
     );
   }
@@ -204,7 +240,11 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
   // ================= INFOGRAPHIC DIALOG =================
   void _showInfographicDialog(
-      BuildContext context, String title, String subtitle, String? imageUrl) {
+      BuildContext context,
+      String title,
+      String subtitle,
+      String? imageUrl,
+      ) {
     if (imageUrl == null || imageUrl.isEmpty) return;
 
     showDialog(
@@ -236,7 +276,10 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
