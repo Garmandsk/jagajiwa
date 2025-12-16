@@ -27,8 +27,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   @override
   void initState() {
     super.initState();
-    // Gunakan addPostFrameCallback untuk memanggil provider
-    // SETELAH build pertama selesai.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<KnowledgeProvider>();
       provider.fetchArticles();
@@ -43,24 +41,23 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     super.dispose();
   }
 
+  // 🎯 FUNGSI BARU: Untuk navigasi Bottom Bar (Menggunakan context.go)
+  void navigateBottomBar(String route) {
+    context.go(route);
+  }
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       // 1. APP BAR KUSTOM
       appBar: AppBar(
-        // Tombol Kembali Kustom
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.white.withOpacity(0.1),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.pop(),
-            ),
-          ),
-        ),
-        title: Center(child: const Text('Pusat Pengetahuan')),
+        // leading widget sudah dihapus
+
+        // 🎯 PERUBAHAN DI SINI:
+        title: const Text('Pusat Pengetahuan'), // Judul diletakkan langsung
+        centerTitle: true,                      // <-- Tambahkan ini untuk mempusatkan judul
+
         // Tombol Filter Kustom
         actions: [
           Padding(
@@ -68,8 +65,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
             child: CircleAvatar(
               backgroundColor: Colors.white.withOpacity(0.1),
               child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.dice, color: Colors.white),
-                onPressed: () => context.push("/loss-simulation"), 
+                icon: const FaIcon(FontAwesomeIcons.dice, color: Colors.white),
+                onPressed: () => context.push("/loss-simulation"),
               ),
             ),
           ),
@@ -86,8 +83,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 color: Colors.black.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.4), // Warna garis luar
-                  width: 1.5, // Ketebalan garis luar
+                  color: Colors.white.withOpacity(0.4),
+                  width: 1.5,
                 ),
               ),
               child: Row(
@@ -101,21 +98,22 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
             ),
             const SizedBox(height: 30),
 
+            // 3. SEARCH BAR
             Container(
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.4), // Warna garis luar
-                  width: 1.5, // Ketebalan garis luar
+                  color: Colors.white.withOpacity(0.4),
+                  width: 1.5,
                 ),
               ),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Cari...',
-                  prefixIcon: Icon(Icons.search, ),
-                  filled: true,                  
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
@@ -123,8 +121,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 ),
                 onChanged: (query) {
                   Provider.of<KnowledgeProvider>(context, listen: false)
-                        .updateSearchQuery(query);
-                  
+                      .updateSearchQuery(query);
+
                 },
               ),
             ),
@@ -134,7 +132,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
             Expanded(
               child: Consumer<KnowledgeProvider>(
                 builder: (context, provider, child) {
-                  // Minta provider untuk memfilter list berdasarkan state lokal
                   final items = provider.getFilteredList(
                     _selectedTabIndex,
                   );
@@ -147,18 +144,12 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                     return const Center(child: Text('Tidak ada konten ditemukan.'));
                   }
 
-                  // Tampilkan list
                   return ListView.builder(
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      String title = '';
-                      String subtitle = '';
-                      String image_url = '';
-                      IconData icon = Icons.article; // Default
 
-                      // Cek tipe konten
-                      if (item is Article) {                        
+                      if (item is Article) {
                         return KnowledgeListCard(
                           title: item.title,
                           subtitle: item.subtitle,
@@ -168,35 +159,76 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                             context.push('/knowledge/article-detail', extra: item);
                           },
                         );
-                      } else if (item is Infographic) {                                     
+                      } else if (item is Infographic) {
                         return KnowledgeListCard(
                           title: item.title,
                           subtitle: item.subtitle,
                           icon:  Icons.image_outlined,
-                          image_url: item.image_url,                          
+                          image_url: item.image_url,
                           onTap: () => _showInfographicDialog(context, item.title, item.subtitle, item.image_url),
                         );
-                      } else if (item is Video) {                        
-                        print('--------------------------');
-                        print('JUDUL: ${item.title}');
-                        print('URL ASLI: ${item.video_url}');
-                        
+                      } else if (item is Video) {
                         final videoId = YoutubePlayer.convertUrlToId(item.video_url ?? '');
-                        print('PARSED ID: $videoId'); // <-- Ini kemungkinan besar "null"
-                        
-                        final thumbnailUrl = 'https://img.youtube.com/vi/$videoId/mqdefault.jpg';
-                        print('THUMBNAIL URL: $thumbnailUrl'); // <-- Ini kemungkinan besar sama terus
-                        // ------------------------------------
-
                         if (videoId == null) return const SizedBox.shrink();
 
                         return _buildVideoCard(context, videoId, item.title);
                       }
+                      return null;
                     },
                   );
                 },
               ),
             ),
+          ],
+        ),
+      ),
+
+      // 🎯 FLOATING ACTION BUTTON
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigasi ke Loss Simulation
+          context.push('/loss-simulation');
+        },
+        backgroundColor: Colors.black,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, color: Colors.white, size: 30),
+      ),
+
+      // 🎯 BOTTOM NAVIGATION BAR
+      bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+          // Home
+          IconButton(
+          icon: const Icon(Icons.home, color: Colors.grey),
+          onPressed: () => navigateBottomBar('/home')
+      ),
+      // Komunitas (Forum Anonim)
+      IconButton(
+          icon: const Icon(Icons.group, color: Colors.grey),
+          onPressed: () => navigateBottomBar('/anonym-forum')
+      ),
+
+      // 🎯 TOMBOL BARU: QUIZ/LOSS SIMULATION
+      // Menggantikan SizedBox(width: 40)
+      IconButton(
+          icon: const Icon(Icons.add_circle, color: Colors.grey, size: 30), // Menggunakan ikon lain, misalnya add_circle
+          // Asumsi tombol ini mengarah ke halaman kuis
+          onPressed: () => navigateBottomBar('/quiz') // Ganti '/quiz-start' dengan rute yang benar
+      ),
+
+      // Artikel (Knowledge) - Highlighted atau Greyed
+      IconButton(
+          icon: const Icon(Icons.menu_book, color: Colors.black), // Contoh: Di ProfileScreen ini seharusnya grey
+          onPressed: () => navigateBottomBar('/knowledge')
+      ),
+      // Profil
+      IconButton(
+        icon: const Icon(Icons.person, color: Colors.grey),
+        onPressed: () => navigateBottomBar('/profile')),
           ],
         ),
       ),
@@ -211,7 +243,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         onTap: () {
           setState(() {
             _selectedTabIndex = index;
-            // Panggil provider untuk memfilter ulang list
             Provider.of<KnowledgeProvider>(context, listen: false)
                 .updateSelectedTab(index);
           });
@@ -253,7 +284,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 child: Container(color: Colors.black.withOpacity(0.3)),
               ),
             ),
-            Center(              
+            Center(
               child: Material(
                 color: Colors.transparent,
                 child: Card(
@@ -264,9 +295,9 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleLarge
+                            title,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleLarge
                         ),
                         // 2. SUBTITLE (DI LUAR INTERACTIVEVIEWER)
                         Text(
@@ -297,7 +328,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
       },
     );
   }
-  
+
   // 2. WIDGET UNTUK KARTU VIDEO
   Widget _buildVideoCard(BuildContext context, String videoId, String title) {
     final thumbnailUrl = 'https://img.youtube.com/vi/$videoId/mqdefault.jpg';
@@ -349,7 +380,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
   // 3. FUNGSI UNTUK MODAL VIDEO
   void _showVideoPlayerModal(BuildContext context, String videoId) {
-    // Controller dibuat saat modal dibuka
     final controller = YoutubePlayerController(
       initialVideoId: videoId,
       flags: const YoutubePlayerFlags(
@@ -368,7 +398,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color, // Ambil warna dari tema
+                color: Theme.of(context).cardTheme.color,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -388,7 +418,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                   YoutubePlayer(
                     controller: controller,
                     showVideoProgressIndicator: true,
-                    // Tombol fullscreen akan otomatis muncul
                   ),
                 ],
               ),
@@ -397,7 +426,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         );
       },
     ).whenComplete(() {
-      // Wajib: Hancurkan controller saat modal ditutup
       controller.dispose();
     });
   }

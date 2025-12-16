@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:frontend/app/theme/app_theme.dart';
 import 'package:frontend/core/models/article_model.dart';
-import 'package:frontend/core/models/profile_model.dart';
 import 'package:frontend/core/utils/knowledge_category_helper.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';

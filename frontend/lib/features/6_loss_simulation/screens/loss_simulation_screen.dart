@@ -116,7 +116,7 @@ class _LossSimulationScreenState extends State<LossSimulationScreen> {
 
     return Scaffold(
       // 1. Latar Belakang Gelap (Background)
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -124,9 +124,9 @@ class _LossSimulationScreenState extends State<LossSimulationScreen> {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-            backgroundColor: colorScheme.onBackground.withOpacity(0.1),
+            backgroundColor: colorScheme.onSurface.withOpacity(0.1),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: colorScheme.onBackground, size: 20),
+              icon: Icon(Icons.arrow_back, color: colorScheme.onSurface, size: 20),
               onPressed: () => context.pop(),
             ),
           ),
@@ -134,7 +134,7 @@ class _LossSimulationScreenState extends State<LossSimulationScreen> {
         title: Text(
           'Simulasi Kekalahan',
           // Teks Putih (onBackground)
-          style: textTheme.titleLarge?.copyWith(color: colorScheme.onBackground),
+          style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
         ),
         centerTitle: true,
       ),
@@ -188,7 +188,7 @@ class _LossSimulationScreenState extends State<LossSimulationScreen> {
                 _currentMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: colorScheme.onBackground, // Putih kontras
+                  color: colorScheme.onSurface, // Putih kontras
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   height: 1.2,

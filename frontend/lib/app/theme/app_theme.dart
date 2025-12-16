@@ -22,10 +22,7 @@ class AppTheme {
 
     // --- INI ADALAH BAGIAN KUNCI (ColorScheme) ---
     colorScheme: const ColorScheme.dark(
-      background: darkBackgroundColor, // Latar belakang utama (gelap)
-      surface: lightCardColor,        // Latar belakang 'permukaan' seperti Card (terang)
-      
-      onBackground: Colors.white,       // Teks DI ATAS background (gelap) -> Putih
+      surface: lightCardColor,       // Teks DI ATAS background (gelap) -> Putih
       onSurface: Colors.black87,      // Teks DI ATAS surface (terang) -> Hitam
       
       primary: accentColor,           // Warna aksen (tombol, dll)
