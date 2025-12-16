@@ -18,15 +18,29 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
   final TextEditingController _textController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    /// 🔥 RESET QUIZ AGAR TIDAK LANGSUNG KE "TERIMA KASIH"
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<QuizProvider>().resetQuiz();
+    });
+  }
+
+  @override
   void dispose() {
     _textController.dispose();
     super.dispose();
   }
 
-  bool _canProceed(quiz, QuizProvider provider) {
+  bool _canProceed(QuizProvider provider, quiz) {
+    /// HALAMAN TERAKHIR → BOLEH LANGSUNG SELESAI
+    if (provider.currentIndex == provider.length - 1) return true;
+
     if (quiz.isTextInput) {
       return _textController.text.trim().isNotEmpty;
     }
+
     return provider.answers[provider.currentIndex] != null;
   }
 
@@ -40,7 +54,7 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
       );
     }
 
-    if (!_canProceed(quiz, provider)) return;
+    if (!_canProceed(provider, quiz)) return;
 
     if (provider.currentIndex < provider.length - 1) {
       provider.nextQuestion();
@@ -115,10 +129,10 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
     return Consumer<QuizProvider>(
       builder: (context, provider, _) {
         final quiz = provider.getQuiz(provider.currentIndex);
-        final enabled = _canProceed(quiz, provider);
+        final isLast = provider.currentIndex == provider.length - 1;
+        final enabled = _canProceed(provider, quiz);
 
         return Scaffold(
-          /// 🔥 PENTING: JANGAN PAKAI colors.surface
           backgroundColor: theme.scaffoldBackgroundColor,
 
           body: SafeArea(
@@ -126,136 +140,139 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  /// ================= TOP BAR =================
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: colors.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.close, color: colors.onSurface),
-                          onPressed: _showExitConfirmation,
-                        ),
-                        Text(
-                          "Kuesioner",
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: colors.onSurface,
-                            fontWeight: FontWeight.bold,
+                  /// ================= TOP BAR (HILANG DI HALAMAN TERAKHIR)
+                  if (!isLast)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: colors.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.close, color: colors.onSurface),
+                            onPressed: _showExitConfirmation,
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: colors.primaryContainer,
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Text(
-                            "${provider.currentIndex + 1} / ${provider.totalSteps}",
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: colors.onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
+                          Text(
+                            "Kuesioner",
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: colors.onSurface,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: colors.primaryContainer,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: Text(
+                              "${provider.currentIndex + 1} / ${provider.totalSteps}",
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colors.onPrimaryContainer,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
                   const SizedBox(height: 30),
 
-                  /// ================= QUESTION =================
+                  /// ================= QUESTION
                   Text(
                     quiz.question,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: colors.onBackground,
+                      color: colors.onSurface,
                       fontWeight: FontWeight.bold,
+                      height: 1.3,
                     ),
                   ),
 
                   const SizedBox(height: 25),
 
-                  /// ================= CONTENT =================
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          if (quiz.isNumberPicker)
-                            QuizNumberWidget(
-                              selected:
-                              provider.answers[provider.currentIndex] as int? ??
-                                  18,
-                              onSelected: (v) =>
-                                  provider.setAnswer(provider.currentIndex, v),
-                            ),
+                  /// ================= CONTENT
+                  if (!isLast)
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            if (quiz.isNumberPicker)
+                              QuizNumberWidget(
+                                selected:
+                                provider.answers[provider.currentIndex]
+                                as int? ??
+                                    18,
+                                onSelected: (v) => provider.setAnswer(
+                                    provider.currentIndex, v),
+                              ),
 
-                          if (!quiz.isNumberPicker && quiz.options != null)
-                            ...List.generate(quiz.options!.length, (i) {
-                              return QuizOptionWidget(
-                                text: quiz.options![i],
-                                isSelected:
-                                provider.answers[provider.currentIndex] == i,
-                                onTap: () => provider.setAnswer(
-                                    provider.currentIndex, i),
-                              );
-                            }),
+                            if (!quiz.isNumberPicker &&
+                                quiz.options != null)
+                              ...List.generate(quiz.options!.length, (i) {
+                                return QuizOptionWidget(
+                                  text: quiz.options![i],
+                                  isSelected:
+                                  provider.answers[provider.currentIndex] ==
+                                      i,
+                                  onTap: () => provider.setAnswer(
+                                      provider.currentIndex, i),
+                                );
+                              }),
 
-                          if (quiz.isTextInput)
-                            TextField(
-                              controller: _textController,
-                              maxLines: 4,
-                              style: TextStyle(color: colors.onSurface),
-                              decoration: InputDecoration(
-                                hintText: "Tulis jawaban kamu di sini...",
-                                hintStyle:
-                                TextStyle(color: colors.onSurfaceVariant),
-                                filled: true,
-                                fillColor: colors.surfaceContainerHighest,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide.none,
+                            if (quiz.isTextInput)
+                              TextField(
+                                controller: _textController,
+                                maxLines: 4,
+                                style:
+                                TextStyle(color: colors.onSurface),
+                                decoration: InputDecoration(
+                                  hintText:
+                                  "Tulis jawaban kamu di sini...",
+                                  hintStyle: TextStyle(
+                                      color:
+                                      colors.onSurfaceVariant),
+                                  filled: true,
+                                  fillColor:
+                                  colors.surfaceContainerHighest,
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(16),
+                                    borderSide: BorderSide.none,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
 
                   const SizedBox(height: 20),
 
-                  /// ================= BUTTONS =================
+                  /// ================= BUTTONS
                   Row(
                     children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: provider.currentIndex > 0
-                              ? () => _previous(provider)
-                              : null,
-                          child: const Text("Sebelumnya"),
+                      if (!isLast)
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: provider.currentIndex > 0
+                                ? () => _previous(provider)
+                                : null,
+                            child: const Text("Sebelumnya"),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
+
+                      if (!isLast) const SizedBox(width: 12),
+
                       Expanded(
                         child: FilledButton(
                           onPressed: enabled ? () => _next(provider) : null,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                provider.currentIndex == provider.length - 1
-                                    ? "Selesai"
-                                    : "Selanjutnya",
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.arrow_forward),
-                            ],
-                          ),
+                          child: Text(isLast ? "Selesai" : "Selanjutnya"),
                         ),
                       ),
                     ],

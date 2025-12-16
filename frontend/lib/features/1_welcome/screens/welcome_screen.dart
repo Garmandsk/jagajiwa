@@ -59,7 +59,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           children: [
             const SizedBox(height: 20),
             const Text(
-              "Welcome Screen",
+              "Selamat Datang",
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,

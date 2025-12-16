@@ -9,7 +9,7 @@ class QuizProvider extends ChangeNotifier {
    * SECTION 1 — QUIZ DATA
    * ===================================================== */
 
-  final int totalSteps = 16;
+  final int totalSteps = 15;
 
   final List<QuizModel> _quizzes = [
     QuizModel(
