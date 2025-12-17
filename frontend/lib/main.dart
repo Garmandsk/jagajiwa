@@ -1,77 +1,95 @@
-import 'package:flutter/material.dart';
-import './app/routes/app_router.dart';
-import 'package:frontend/app/theme/app_theme.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:frontend/features/9_profile/providers/profile_provider.dart';
-import 'package:english_words/english_words.dart';
-import 'package:window_manager/window_manager.dart';
 import 'dart:io' show Platform;
-// ... import lainnya
 
-void main() async {
-  // Pastikan semua binding siap sebelum menjalankan aplikasi
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:window_manager/window_manager.dart';
+
+// App core
+import 'package:frontend/app/routes/app_router.dart';
+import 'package:frontend/app/theme/app_theme.dart';
+
+// Providers
+import 'package:frontend/features/2_auth/providers/auth_provider.dart';
+import 'package:frontend/features/4_quiz/providers/quiz_provider.dart';
+import 'package:frontend/features/5_knowledge_center/providers/knowledge_provider.dart';
+import 'package:frontend/features/7_anonym_forum/providers/anonym_forum_provider.dart';
+import 'package:frontend/features/9_profile/providers/profile_provider.dart';
+import 'package:frontend/features/9_profile/providers/setting_provider.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID');
+  await dotenv.load(fileName: ".env");
 
-  // Cek apakah platform adalah Desktop (Windows, macOS, atau Linux)
-  // Ini penting agar kode ini tidak berjalan di Android/iOS
+  // =========================================
+  // Desktop Window (HANYA DESKTOP)
+  // =========================================
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    // Inisialisasi window manager
     await windowManager.ensureInitialized();
 
-    // Tentukan opsi jendela Anda
-    WindowOptions windowOptions = const WindowOptions(
-      // Atur ukuran sesuai target device (contoh: Pixel 5, 393x851 logical pixels)
+    const windowOptions = WindowOptions(
       size: Size(393, 851),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
-      title: "JagaJiwa - Mode Debug",
+      title: "JagaJiwa",
     );
 
-    // Terapkan opsi saat jendela siap ditampilkan
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
     });
   }
 
-  // Inisialisasi Supabase
+  // =========================================
+  // Supabase (WAJIB HANYA DI SINI)
+  // =========================================
+  final String supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+  final String supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+
   await Supabase.initialize(
-    url: 'https://ojdzfnfpaosydemfywyq.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZHpmbmZwYW9zeWRlbWZ5d3lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTgzMTEsImV4cCI6MjA3MzU3NDMxMX0.x537kj9JwiKZTfAWYL_Zj1pXKWcgSctAoRLNGt8lk4Y',
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
-  runApp(
-    // MultiProvider HARUS menjadi widget paling luar
-    MultiProvider(
-      providers: [
-        // Pastikan Anda sudah mendaftarkan ProfileProvider di sini
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),        
-        // ... daftarkan provider lainnya di sini
-      ],
-      // JagaJiwaApp (yang berisi MaterialApp) ada DI DALAM MultiProvider
-      child: const JagaJiwaApp(),
-    ),
-  );
+  runApp(const JagaJiwaApp());
 }
 
+// =================================================
+// ROOT APP
+// =================================================
 class JagaJiwaApp extends StatelessWidget {
   const JagaJiwaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'JagaJiwa',
-      // Menggunakan tema "Pelita Jiwa" yang sudah kita definisikan
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark, // Default ke tema gelap "Pelita Jiwa"
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => SettingProvider()),
+        ChangeNotifierProvider(create: (_) => QuizProvider()),
+        ChangeNotifierProvider(create: (_) => AnonymForumProvider()),
+      ],
+      child: Consumer<SettingProvider>(
+        builder: (context, settingProvider, _) {
+          return MaterialApp.router(
+            title: 'JagaJiwa',
+            debugShowCheckedModeBanner: false,
 
-      // Menggunakan GoRouter untuk navigasi
-      routerConfig: AppRouter.router,
-      debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: settingProvider.themeMode,
+
+            routerConfig: AppRouter.router,
+          );
+        },
+      ),
     );
   }
 }

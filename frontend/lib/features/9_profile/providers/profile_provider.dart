@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:frontend/core/models/profile_model.dart';
+import 'package:frontend/core/models/profile_model.dart'; // Pastikan model Anda benar
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileProvider extends ChangeNotifier {
@@ -14,40 +14,45 @@ class ProfileProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  // --- FUNGSI PENGAMBILAN DATA PROFIL ---
+  void clearData() {
+    _profile = null; // Hapus data profil dari memori
+    _errorMessage = null;
+    notifyListeners(); // Beritahu UI bahwa data sudah kosong
+  }
+
+  // --- FUNGSI PENGAMBILAN DATA PROFIL (DINAMIS) ---
   Future<void> fetchProfile() async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    if (_profile != null && _profile!.profile_id != user.id) {
+      _profile = null; 
+    }
+
+    // Jangan fetch ulang jika data sudah ada
+    if (_profile != null) return; 
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      // 1. Dapatkan informasi pengguna yang sedang login saat ini
-      // final user = _supabase.auth.currentUser;
-      // if (user == null) {
-      //   throw 'Pengguna tidak login!';
-      // }
+      // 1. Dapatkan pengguna yang sedang login saat ini
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
+        throw 'Pengguna tidak login!';
+      }
 
-      // // 2. Lakukan query ke tabel 'profiles'
-      // final response = await _supabase
-      //     .from('profiles')
-      //     .select()
-      //     .eq('id', user.id) // Cari baris dimana kolom 'id' sama dengan id pengguna yang login
-      //     .single(); // Kita berharap hanya ada 1 hasil, jadi gunakan .single()
-
-      // // 3. Proses data jika berhasil
-      // _profile = Profile.fromJson(response);
-
-      // Di dalam ProfileProvider
+      // 2. Lakukan query ke tabel 'profiles' berdasarkan ID pengguna
       final response = await _supabase
           .from('profiles')
           .select()
-          .eq('id', '73345a4b-736e-41cf-885c-0eae026574a8') 
-          .single(); // <-- BIANG KELADINYA DI SINI
+          .eq('profile_id', user.id) // Gunakan ID dinamis
+          .single(); 
 
-      print('Response from Supabase: $response');
-      
-      // Kode selanjutnya adalah:
+      // 3. Proses data jika berhasil
       _profile = Profile.fromJson(response);
+      print('Response from Supabase: $response'); // Tetap simpan print untuk debug
 
     } catch (error) {
       _errorMessage = 'Gagal memuat profil: $error';
@@ -57,11 +62,34 @@ class ProfileProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+  
+  /*
+   Future<void> fetchProfile() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
 
-   // --- FUNGSI BARU UNTUK GENERATE NAMA ---
+    try {
+      final response = await _supabase
+          .from('profiles')
+          .select()
+          .eq('profile_id', '73345a4b-736e-41cf-885c-0eae026574a8')
+          .single(); 
+
+      print('Response from Supabase: $response');
+      _profile = Profile.fromJson(response);
+    } catch (error) {
+      _errorMessage = 'Gagal memuat profil: $error';
+      print(_errorMessage);
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+  */
+
+  // --- FUNGSI GENERATE NAMA (SUDAH BAGUS) ---
   Future<String?> generateNewAnoname() async {
     try {
-      // Memanggil fungsi SQL 'get_new_anonymous_name' yang baru kita buat
       final newAnoname = await _supabase.rpc('get_new_anonymous_name');
       return newAnoname as String?;
     } catch (e) {
@@ -70,23 +98,57 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  // --- FUNGSI BARU UNTUK UPDATE NAMA ---
+  // --- FUNGSI UPDATE NAMA (SUDAH BAGUS, SEDIKIT REVISI) ---
   Future<bool> updateAnoname(String newAnoname) async {
     if (_profile == null) return false;
 
     try {
       await _supabase
         .from('profiles')
-        .update({'anoname': newAnoname}) // Ganti kolom 'name' menjadi 'anonymous_name'
-        .eq('id', _profile!.id);
+        .update({'anoname': newAnoname})
+        .eq('profile_id', _profile!.profile_id);
       
-      // Refresh data profil lokal setelah berhasil update
-      await fetchProfile();
+      // Optimasi: Tidak perlu fetch ulang. Cukup update state lokal.
+      _profile!.anoname = newAnoname; // Update objek profile di memori
+      notifyListeners(); // Beri tahu UI (terutama Consumer)
       
       return true;
     } catch (e) {
       print('Error updating anoname: $e');
       return false;
     }
+  }
+
+  // --- FUNGSI TOGGLE FAVORIT (SUDAH BAGUS, SEDIKIT REVISI) ---
+  Future<void> toggleArticleFavorite(String articleId) async {
+    if (_profile == null) return;
+
+    print("profile_provider.dart: data profile: $_profile");
+
+    // Buat salinan list favorit
+    final List<String> currentFavorites = List<String>.from(_profile!.favorite_articles_id);
+
+    print("profile_provider.dart: artikel favorit: $currentFavorites");
+
+    if (currentFavorites.contains(articleId)) {
+      currentFavorites.remove(articleId);
+    } else {
+      currentFavorites.add(articleId);
+    }
+
+    // Optimasi: Update UI lokal dulu (Optimistic UI)
+    _profile!.favorite_articles_id = currentFavorites;
+    notifyListeners();
+    print("UI di-update secara optimis");
+
+    try {
+      // Kirim perubahan ke Supabase di latar belakang
+      await _supabase
+        .from('profiles')
+        .update({'favorite_articles_id': currentFavorites})
+        .eq('profile_id', _profile!.profile_id);
+    } catch (e) {
+      print("Gagal update favorit ke Supabase: $e");    
+    }  
   }
 }

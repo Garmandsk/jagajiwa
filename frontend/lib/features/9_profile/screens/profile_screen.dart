@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/features/9_profile/providers/profile_provider.dart';
+import 'package:frontend/features/9_profile/providers/setting_provider.dart';
+import 'package:frontend/core/utils/quiz_result_helper.dart';
+import 'package:frontend/app/widgets/navigation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:frontend/core/utils/quiz_result_helper.dart';
+import 'package:intl/intl.dart';
+
+import '../../../app/widgets/navigation.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,167 +19,219 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Variabel state lokal untuk layar ini
-  String? _newAnonymousName;
+  String? _newAnoname;
   bool _isEditing = false;
   bool _isGenerating = false;
   bool _isSaving = false;
 
-  // Fungsi untuk tombol Roll
-  Future<void> _rollNewName() async {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileProvider>().fetchProfile();
+      Intl.defaultLocale = 'id';
+    });
+  }
+
+  Future<void> _rollNewAnoname() async {
     setState(() => _isGenerating = true);
-    final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final generatedName = await provider.generateNewAnoname();
-    if (generatedName != null) {
+    final provider = context.read<ProfileProvider>();
+    final name = await provider.generateNewAnoname();
+    if (name != null) {
       setState(() {
-        _newAnonymousName = generatedName;
+        _newAnoname = name;
         _isEditing = true;
       });
     }
     setState(() => _isGenerating = false);
   }
 
-  // Fungsi untuk tombol Batal
   void _cancelEdit() {
     setState(() {
-      _newAnonymousName = null;
+      _newAnoname = null;
       _isEditing = false;
     });
   }
 
-  // Fungsi untuk tombol Simpan
   Future<void> _saveNewName() async {
-    if (_newAnonymousName == null) return;
+    if (_newAnoname == null) return;
     setState(() => _isSaving = true);
-    final provider = Provider.of<ProfileProvider>(context, listen: false);
-    final success = await provider.updateAnoname(_newAnonymousName!);
 
-    if (mounted) { // Cek jika widget masih ada di tree
+    final success =
+    await context.read<ProfileProvider>().updateAnoname(_newAnoname!);
+
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? 'Nama berhasil diperbarui!' : 'Gagal memperbarui nama.'),
+          content:
+          Text(success ? 'Nama berhasil diperbarui' : 'Gagal menyimpan'),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
       );
-      setState(() {
-        _newAnonymousName = null;
-        _isEditing = false;
-      });
+      _cancelEdit();
     }
+
     setState(() => _isSaving = false);
   }
-
-
-  @override
-  void initState() {
-    // ... (kode initState Anda yang sudah ada tetap di sini)
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProfileProvider>(context, listen: false).fetchProfile();
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil Saya')),
-      // Kita hanya butuh Consumer di sini untuk mendapatkan data awal
+      appBar: AppBar(
+        title: const Text('Profil Saya'),
+        centerTitle: true,
+      ),
+
       body: Consumer<ProfileProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && !_isEditing) {
+        builder: (context, provider, _) {
+          if (provider.isLoading && provider.profile == null) {
             return const Center(child: CircularProgressIndicator());
           }
+
           if (provider.profile == null) {
-            return const Center(child: Text('Gagal memuat profil.'));
+            return Center(
+              child: Text(provider.errorMessage ?? 'Gagal memuat profil'),
+            );
           }
 
           final profile = provider.profile!;
 
-          // Menggunakan nama yang sedang diedit jika ada, jika tidak pakai dari provider
-          final currentName = _newAnonymousName ?? profile.anoname;
-
           return ListView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             children: [
-              // ... (ListTile untuk username, dll)
-
-              ListTile(
-                leading: FaIcon(
-                  FontAwesomeIcons.userSecret,
-                  size: 45,
-                  color: Colors.grey[600],
+              /// ===== ANONAME =====
+              Card(
+                child: ListTile(
+                  leading: const FaIcon(FontAwesomeIcons.userSecret, size: 36),
+                  title: const Text('Anoname'),
+                    subtitle: Text(
+                    _isEditing
+                    ? _newAnoname ?? ''
+                        : profile.anoname ?? 'Anoname belum tersedia',
+                    style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    ),
+                    ),
+                            trailing: _isGenerating
+                      ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : IconButton(
+                    icon: const Icon(Icons.sync),
+                    onPressed: _rollNewAnoname,
+                  ),
                 ),
-                title: const Text('Anoname'),
-                subtitle: Text(
-                  currentName ?? 'Memuat...',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                trailing: _isGenerating
-                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-                    : IconButton(
-                        icon: const Icon(Icons.sync),
-                        tooltip: 'Buat nama baru',
-                        onPressed: _rollNewName,
-                      ),
               ),
 
-              // Tombol Batal dan Simpan yang hanya muncul saat mode edit
-              Visibility(
-                visible: _isEditing,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+              if (_isEditing)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
                   child: _isSaving
-                    ? const Center(child: CircularProgressIndicator())
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TextButton(
-                            onPressed: _cancelEdit,
-                            child: const Text('Batal', style: TextStyle(color: Colors.red)),
-                          ),
-                          ElevatedButton(
-                            onPressed: _saveNewName,
-                            child: const Text('Simpan'),
-                          ),
-                        ],
+                      ? const Center(child: CircularProgressIndicator())
+                      : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: _cancelEdit,
+                        child: const Text('Batal',
+                            style: TextStyle(color: Colors.red)),
                       ),
+                      ElevatedButton(
+                        onPressed: _saveNewName,
+                        child: const Text('Simpan'),
+                      ),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: 16),
+
+              /// ===== INFO USER =====
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.person_outline),
+                      title: const Text('Username'),
+                      subtitle: Text(profile.username),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.calendar_today_outlined),
+                      title: const Text('Bergabung Sejak'),
+                      subtitle:
+                      Text(DateFormat('d MMM y').format(profile.created_at)),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.psychology_outlined),
+                      title: const Text('Hasil Kuis Terakhir'),
+                      subtitle: Text(
+                        QuizResultHelper.getQuizResultText(
+                            profile.quiz_result),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color:
+                          QuizResultHelper.getQuizResultColor(
+                              profile.quiz_result),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.person_outline),
-                title: const Text('Username'),
-                subtitle: Text(profile.username),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.calendar_today_outlined),
-                title: const Text('Bergabung Sejak'),
-                // Contoh format tanggal sederhana
-                subtitle: Text('${profile.created_at.day}/${profile.created_at.month}/${profile.created_at.year}'),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.psychology_outlined),
-                title: const Text('Hasil Kuis Terakhir'),
-                subtitle: Text(QuizResultHelper.getQuizResultText(profile.quiz_result)),
-              ),
-              const Divider(),
-              const SizedBox(height: 30),
-              TextButton(
-                onPressed: () {
-                  // Tambahkan logika untuk logout di sini
-                  Supabase.instance.client.auth.signOut();
+              const SizedBox(height: 16),
+
+              /// ===== PENGATURAN =====
+              Consumer<SettingProvider>(
+                builder: (context, setting, _) {
+                  return Card(
+                    child: Column(
+                      children: [
+                        SwitchListTile(
+                          title: const Text('Notifikasi'),
+                          value: setting.notificationsEnabled,
+                          onChanged: setting.toggleNotifications,
+                        ),
+                        SwitchListTile(
+                          title: const Text('Pengingat Harian'),
+                          value: setting.dailyReminderEnabled,
+                          onChanged: setting.toggleDailyReminder,
+                        ),
+                        SwitchListTile(
+                          title: const Text('Mode Gelap'),
+                          value: setting.themeMode == ThemeMode.dark,
+                          onChanged: setting.toggleTheme,
+                        ),
+                      ],
+                    ),
+                  );
                 },
-                child: const Text('Logout', style: TextStyle(color: Colors.red)),
               ),
-              
+
+              const SizedBox(height: 24),
+
+              /// ===== LOGOUT =====
+              TextButton(
+                onPressed: () async {
+                  context.read<ProfileProvider>().clearData();
+                  await Supabase.instance.client.auth.signOut();
+                  if (mounted) context.go('/sign-in');
+                },
+                child: const Text('Logout',
+                    style: TextStyle(color: Colors.red)),
+              ),
             ],
           );
         },
       ),
+
+      /// ✅ BOTTOM NAVIGATION (PROFILE INDEX = 3)
+      bottomNavigationBar: const MainNavigationBar(currentIndex: 4),
     );
   }
 }
