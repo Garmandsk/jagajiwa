@@ -202,9 +202,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         ),
       ),
 
-      // ================= FLOATING AI CHATBOT BUTTON =================
-      floatingActionButton: const AiChatbotFab(),
-
       // ================= NAVBAR =================
       bottomNavigationBar: const MainNavigationBar(currentIndex: 3),
     );

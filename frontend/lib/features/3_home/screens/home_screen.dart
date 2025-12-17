@@ -222,7 +222,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
           bottomNavigationBar: const MainNavigationBar(currentIndex: 0),
 
-          floatingActionButton: const AiChatbotFab(),
         );
       },
     );

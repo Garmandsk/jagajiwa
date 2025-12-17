@@ -22,8 +22,9 @@ dependencies:
   shared_preferences: ^2.5.3
   youtube_player_flutter: ^9.1.3
   flutter_inappwebview: ^6.0.0
-  flutter_native_splash: ^2.4.0
+  flutter_native_splash: ^2.4.7
   flutter_dotenv: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -35,16 +36,21 @@ flutter:
   assets:
     - assets/images/
     - .env
-    - assets/images/logo.jpeg
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo.jpeg"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.jpeg"
 
 flutter_native_splash:
-  color: "#F1F3F4" # abu terang (light mode)
-  image: assets/images/logo.jpeg
-
-  color_dark: "#121212" # dark mode
-  image_dark: assets/images/logo.jpeg
-
   android: true
-  ios: true
+  ios: false
   web: false
+  color: "#FFFFFF"
+  image: assets/images/logo.jpeg
+  android_12:
+    color: "#FFFFFF"
+    image: assets/images/logo.jpeg
 

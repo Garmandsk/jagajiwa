@@ -63,8 +63,13 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.grain, size: 60, color: Colors.white),
-                    const SizedBox(height: 20),
+                    Image.asset(
+                      'assets/images/jajiw.png',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 0),
                   ],
                 ),
               ),

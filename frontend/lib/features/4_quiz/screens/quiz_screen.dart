@@ -229,7 +229,6 @@ class _QuizScreenState extends State<QuizScreen> {
       ),
 
       // ================= FAB & NAVBAR =================
-      floatingActionButton: const AiChatbotFab(),
       bottomNavigationBar: const MainNavigationBar(currentIndex: 2),
     );
   }

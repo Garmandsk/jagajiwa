@@ -86,7 +86,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   bottom: Radius.elliptical(200, 50),
                 ),
               ),
-              child: const Center(child: Icon(Icons.grain, size: 60, color: Colors.white)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                    'assets/images/jajiw.png',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(height: 0),
+                ],
+              ),
             ),
 
             Padding(
