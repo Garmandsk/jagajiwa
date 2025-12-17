@@ -30,22 +30,22 @@ Aplikasi kami dibangun dengan 8 fitur inti yang berfokus pada dukungan dan eduka
 
 | Splash Screen | Welcome Screen | Daftar |
 | :---: | :---: | :---: |
-| ![Layar Splash Screen](link/ke/gambar/beranda.png) | ![Layar Welcome Screen](link/ke/gambar/forum.png) | ![Layar Layar Daftar](link/ke/gambar/profil.png) |
+| ![Layar Splash Screen](./frontend/assets/images/splash.jpg) | ![Layar Welcome Screen](./frontend/assets/images/welcome.jpg) | ![Layar Layar Daftar](./frontend/assets/images/daftar.jpg) |
 | **Tampilan Splash Screem** | **Tampilan Welcome Screen** | **Tampilan Daftar** |
 
 | Masuk | Beranda | Pengaturan Profil |
 | :---: | :---: | :---: |
-| ![Layar Masuk](link/ke/gambar/beranda.png) | ![Layar Beranda](link/ke/gambar/forum.png) | ![Layar Pengaturan Profil](link/ke/gambar/profil.png) |
+| ![Layar Masuk](./frontend/assets/images/masuk.jpg) | ![Layar Beranda](./frontend/assets/images/beranda.jpg) | ![Layar Pengaturan Profil](./frontend/assets/images/profil.jpg) |
 | **Tampilan Masuk** | **tampilan Beranda** | **Tampilan Pengaturan Profil** |
 
 | Kuesioner Psikologis | Pusat Pengetahuan | Simulasi Kekalahan |
 | :---: | :---: | :---: |
-| ![Layar Kuesioner Psikologis](link/ke/gambar/beranda.png) | ![Layar Pusat Pengetahuan](link/ke/gambar/forum.png) | ![Layar Simulasi Kekalahan](link/ke/gambar/profil.png) |
+| ![Layar Kuesioner Psikologis](./frontend/assets/images/kuesioner.jpg) | ![Layar Pusat Pengetahuan](./frontend/assets/images/pengetahuan.jpg) | ![Layar Simulasi Kekalahan](./frontend/assets/images/simulasi.jpg) |
 | **Tampilan Kuesioner Psikologis** | **tampilan Pusat Pengetahuan** | **Tampilan Simulasi Kekalahan** |
 
 | Forum Anonim | Chatbot AI |
 | :---: | :---: |
-| ![Layar Forum Anonim](link/ke/gambar/beranda.png) | ![Layar Chatbot AI](link/ke/gambar/forum.png) | 
+| ![Layar Forum Anonim](./frontend/assets/images/forum.jpg) | ![Layar Chatbot AI](./frontend/assets/images/chatbot.jpg) | 
 | **Tampilan Forum Anonim** | **tampilan Chatbot AI** |
 
 ## 🛠️ Teknologi yang Digunakan
