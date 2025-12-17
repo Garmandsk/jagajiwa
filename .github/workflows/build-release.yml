@@ -1,0 +1,134 @@
+name: Build and Release Jagajiwa APK (
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - forum-anonym
+    tags:
+      - 'v*'
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/**' # Jalan juga kalau kita edit file workflow ini
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Flutter APK
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+          # Langkah NDK ini opsional, kalau error "NDK not found" baru aktifkan
+        # - name: Install NDK
+        #   run: sdkmanager --install "ndk;27.0.12077973"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          channel: 'stable'
+          cache: true
+
+      # Karena sudah ada 'defaults.working-directory', command ini otomatis jalan di folder frontend
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # File .env akan tercipta di dalam folder frontend/.env (Otomatis)
+      - name: Create .env file
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          echo "$ENV_FILE" > .env
+
+      # File keystore akan tercipta di frontend/android/app/... (Otomatis)
+      - name: Decode Keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+
+      # File properties akan tercipta di frontend/android/key.properties (Otomatis)
+      - name: Create key.properties
+        env:
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=$ANDROID_STORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build Release APK
+        run: flutter build apk --release --obfuscate --split-debug-info=./debug-info
+
+      - name: Get Version
+        id: get_version
+        run: |
+          VERSION=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jagajiwa-app-v${{ steps.get_version.outputs.version }}
+          # Perhatikan ada tambahan 'frontend/' di depan
+          path: frontend/build/app/outputs/flutter-apk/app-release.apk
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: jagajiwa-app-v${{ needs.build.outputs.version }}
+          path: ./
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app-release.apk
+          name: Release v${{ needs.build.outputs.version }}
+          body: |
+            ## Jagajiwa v${{ needs.build.outputs.version }}
+            Rilis terbaru aplikasi Jagajiwa.
+            
+            ### 🔒 Keamanan
+            - Signed APK
+            - Obfuscated Code
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,6 +5,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// load file key.properties
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 android {
     namespace = "com.example.frontend"
     compileSdk = flutter.compileSdkVersion
@@ -19,6 +25,23 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    signingConfigs {
+        release {
+            storeFile = keystorePropertiesFile.exists() ? file(keystoreProperties['storeFile']) : null
+
+            storePassword = keystoreProperties['storePassword'] ?: System.getenv("ANDROID_STORE_PASSWORD")
+            keyAlias = keystoreProperties['keyAlias'] ?: System.getenv("ANDROID_KEY_ALIAS")
+            keyPassword = keystoreProperties['keyPassword'] ?: System.getenv("ANDROID_KEY_PASSWORD")
+
+            // Khusus storeFile untuk Env Var (GitHub Actions)
+            // Di GitHub kita decode .jks ke path tertentu, misal 'upload-keystore.jks'
+            if (storeFile == null) {
+                storeFile = file("upload-keystore.jks")
+            }
+        }
+    }
+
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.frontend"
@@ -32,9 +55,11 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig signingConfigs.release
+
+                    minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
