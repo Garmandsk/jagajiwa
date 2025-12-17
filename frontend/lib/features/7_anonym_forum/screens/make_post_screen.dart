@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:frontend/app/widgets/navigation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/anonym_forum_provider.dart';
 
 class MakePostScreen extends StatefulWidget {
@@ -13,6 +16,7 @@ class MakePostScreen extends StatefulWidget {
 class _MakePostScreenState extends State<MakePostScreen> {
   final TextEditingController _controller = TextEditingController();
   static const int maxChars = 50000;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -29,24 +33,26 @@ class _MakePostScreenState extends State<MakePostScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Tuliskan apa pun yang ada di pikiranmu dengan bebas.'),
+            Text('Tuliskan apa pun yang ada di pikiranmu dengan bebas.', 
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
             const SizedBox(height: 12),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: TextField(
                   controller: _controller,
                   maxLines: null,
                   maxLength: maxChars,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
+                  autofocus: true,  // Tambahkan ini
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Tulis sesuatu...',
-                    hintStyle: TextStyle(color: Colors.white54),
+                    hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
               ),
@@ -57,13 +63,35 @@ class _MakePostScreenState extends State<MakePostScreen> {
               children: [
                 Text('${_controller.text.length}/$maxChars'),
                 ElevatedButton(
-                  onPressed: () async {
+                  onPressed: _isLoading ? null : () async {
                     final txt = _controller.text.trim();
                     if (txt.isEmpty) return;
-                    await Provider.of<AnonymForumProvider>(context, listen: false).createPost(txt);
-                    if (mounted) Navigator.pop(context);
+                    final user = Supabase.instance.client.auth.currentUser;
+                    if (user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Anda harus login terlebih dahulu')),
+                      );
+                      return;
+                    }
+                    setState(() => _isLoading = true);
+                    try {
+                      await Provider.of<AnonymForumProvider>(context, listen: false).createPost(txt);
+                      if (mounted) context.go('/anonym-forum');
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Gagal membuat post: $e')),
+                        );
+                      }
+                    } finally {
+                      if (mounted) setState(() => _isLoading = false);
+                    }
                   },
-                  child: const Text('Kirim'),
+                  child: _isLoading ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ) : const Text('Kirim'),
                 )
               ],
             )

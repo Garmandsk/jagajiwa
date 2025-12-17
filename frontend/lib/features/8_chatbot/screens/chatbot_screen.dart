@@ -96,7 +96,7 @@ class _AIChatBoxScreenState extends State<AIChatBoxScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: const Text(
           'AI Chat Bot',
@@ -236,7 +236,7 @@ class _MessageInputAndKeyboardState extends State<MessageInputAndKeyboard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
           Padding(
@@ -244,7 +244,7 @@ class _MessageInputAndKeyboardState extends State<MessageInputAndKeyboard> {
             child: Container(
               height: 50,
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -254,7 +254,7 @@ class _MessageInputAndKeyboardState extends State<MessageInputAndKeyboard> {
                       margin: const EdgeInsets.all(3),
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(7.0),
                       ),
                       child: GestureDetector(
@@ -268,9 +268,9 @@ class _MessageInputAndKeyboardState extends State<MessageInputAndKeyboard> {
                             child: TextField(
                               controller: _controller,
                               // autofocus: true, // Opsional: Langsung aktif saat layar dibuka
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: 'Ketik disini......',
-                                hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
+                                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(vertical: 10.0),
                               ),

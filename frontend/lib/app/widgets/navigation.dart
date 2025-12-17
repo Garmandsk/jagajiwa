@@ -3,10 +3,14 @@ import 'package:go_router/go_router.dart';
 
 class MainNavigationBar extends StatelessWidget {
   final int currentIndex;
+  final Widget? body;
+  final PreferredSizeWidget? appBar;
 
   const MainNavigationBar({
     super.key,
     required this.currentIndex,
+    this.body,
+    this.appBar,
   });
 
   void _onTap(BuildContext context, int index) {
@@ -27,19 +31,22 @@ class MainNavigationBar extends StatelessWidget {
     }
   }
 
+  void _onFabPressed(BuildContext context) {
+    context.push('/make-post');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: appBar,
+      body: body,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: tambah post
-        },
+        onPressed: () => _onFabPressed(context),
         backgroundColor: Colors.black,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 32, color: Colors.white),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         color: const Color(0xFFD9D9D9),
         shape: const CircularNotchedRectangle(),

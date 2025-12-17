@@ -1,4 +1,5 @@
 import 'package:frontend/features/7_anonym_forum/screens/anonym_forum_screen.dart';
+import 'package:frontend/features/7_anonym_forum/screens/make_post_screen.dart';
 import 'package:frontend/features/8_chatbot/screens/chatbot_screen.dart';
 import 'package:frontend/features/6_loss_simulation/screens/loss_simulation_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -57,6 +58,10 @@ class AppRouter {
         path: '/anonym-forum',
         builder: (context, state) => const AnonymForumScreen(), // Ganti dengan widget Anda
       ), 
+      GoRoute(
+        path: '/make-post',
+        builder: (context, state) => const MakePostScreen(),
+      ),
       GoRoute(
         path: '/chatbot',
         builder: (context, state) => const AIChatBoxScreen(), // Ganti dengan widget Anda
