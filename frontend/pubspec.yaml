@@ -35,3 +35,16 @@ flutter:
   assets:
     - assets/images/
     - .env
+    - assets/images/logo.jpeg
+
+flutter_native_splash:
+  color: "#F1F3F4" # abu terang (light mode)
+  image: assets/images/logo.jpeg
+
+  color_dark: "#121212" # dark mode
+  image_dark: assets/images/logo.jpeg
+
+  android: true
+  ios: true
+  web: false
+

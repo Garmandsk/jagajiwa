@@ -9,6 +9,8 @@ import 'package:frontend/features/6_loss_simulation/screens/loss_simulation_scre
 import 'package:go_router/go_router.dart';
 import 'package:frontend/app/widgets/barrel.dart';
 
+import '../../features/7_anonym_forum/screens/make_post_screen.dart';
+
 class AppRouter {
   static final router = GoRouter(
     initialLocation: '/welcome', // Lokasi awal saat aplikasi dibuka
@@ -83,7 +85,11 @@ class AppRouter {
       GoRoute(
         path: '/anonym-forum',
         builder: (context, state) => const AnonymForumScreen(), // Ganti dengan widget Anda
-      ), 
+      ),
+      GoRoute(
+        path: '/make-post',
+        builder: (context, state) => const MakePostScreen(), // Ganti dengan widget Anda
+      ),
       GoRoute(
         path: '/make-post',
         builder: (context, state) => const MakePostScreen(),
@@ -100,3 +106,4 @@ class AppRouter {
     ],
   );
 }
+

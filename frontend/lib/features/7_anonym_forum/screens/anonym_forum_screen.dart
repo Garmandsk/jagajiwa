@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/widgets/make_post_fab.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../app/widgets/ai_chatbot_fab.dart';
 import '../providers/anonym_forum_provider.dart';
 import 'detail_comment_screen.dart';
 import 'package:frontend/app/widgets/navigation.dart';
@@ -137,6 +139,20 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
             },
           );
         },
+      ),
+
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 10,
+        children: [
+          const MakePostFab(),
+          const AiChatbotFab(),
+        ],
+      ),
+
+      // ===== REUSABLE NAVIGATION BAR =====
+      bottomNavigationBar: const MainNavigationBar(
+        currentIndex: 1, // Forum
       ),
     );
   }

@@ -36,7 +36,7 @@ class AnonymForumProvider extends ChangeNotifier {
         // Cek apakah user login ada di daftar likes
         bool isLikedByMe = false;
         if (userId != null) {
-          isLikedByMe = likesList.any((like) => like['user_id'] == userId);
+          isLikedByMe = likesList.any((like) => like['profile_id'] == userId);
         }
 
         // Parse Post
@@ -124,7 +124,7 @@ class AnonymForumProvider extends ChangeNotifier {
 
       // 2. Insert ke forum_posts
       await _supabase.from('forum_posts').insert({
-        'user_id': user.id,
+        'profile_id': user.id,
         'anoname': myAnoname,
         'content': content,
       });
@@ -151,7 +151,7 @@ class AnonymForumProvider extends ChangeNotifier {
         p.isLiked = false;
         // Hapus dari DB
         await _supabase.from('forum_likes').delete().match({
-          'user_id': user.id,
+          'profile_id': user.id,
           'post_id': postId
         });
       } else {
@@ -159,7 +159,7 @@ class AnonymForumProvider extends ChangeNotifier {
         p.isLiked = true;
         // Tambah ke DB
         await _supabase.from('forum_likes').insert({
-          'user_id': user.id,
+          'profile_id': user.id,
           'post_id': postId
         });
       }
@@ -195,7 +195,7 @@ class AnonymForumProvider extends ChangeNotifier {
       await _supabase.from('forum_comments').insert({
         'post_id': postId,
         'parent_id': parentId, // NULL jika komentar utama, ISI ID jika balasan
-        'user_id': user.id,
+        'profile_id': user.id,
         'anoname': myAnoname,
         'content': content,
       });
