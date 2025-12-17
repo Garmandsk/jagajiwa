@@ -7,6 +7,12 @@
 
 "JagaJiwa" adalah aplikasi mobile pendamping digital yang dirancang untuk pencegahan dan intervensi dini terhadap kecanduan judi online di Indonesia. Aplikasi ini menyediakan platform yang aman, anonim, dan suportif bagi siapa saja yang ingin memahami, mencegah, atau memulai langkah awal keluar dari masalah perjudian.
 
+link release:
+https://github.com/Garmandsk/jagajiwa/releases/tag/v1.0.1
+
+link srs:
+https://docs.google.com/document/d/1dxfvALFm5kiYgB0Bmj5SsydT8GSo0GEbEomE0gLtYzw/edit?usp=sharing
+
 ## ✨ Fitur Utama
 
 Aplikasi kami dibangun dengan 8 fitur inti yang berfokus pada dukungan dan edukasi:
@@ -127,4 +133,4 @@ Kami menggunakan alur kerja **Agile** dengan *feature branching*. **DILARANG PUS
 * **Azlinsyah Fadhilah Meran** (231401013) 
 * **Qadrul Dzul Dina** (231401088)
 * **Muhammad Thomi Dzakwan Nasution** (231401124) 
-* **Gerti Armanda Sembiring** (231401133)
+* **Gerti Armanda Sembiring** (231401133)https://github.com/Garmandsk/jagajiwa/releases/tag/v1.0.1
