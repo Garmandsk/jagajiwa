@@ -9,7 +9,9 @@ plugins {
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    FileInputStream(keystorePropertiesFile).use{
+        keystoreProperties.load(it)
+    }
 }
 
 android {
@@ -28,26 +30,11 @@ android {
 
     signingConfigs {
         create("release") {
-            // LOGIKA HYBRID (Versi Kotlin):
-
-            // 1. Setup storeFile
-            val keyStoreFileName = keystoreProperties.getProperty("storeFile")
-            if (keyStoreFileName != null) {
-                storeFile = file(keyStoreFileName)
-            } else {
-                // Fallback untuk GitHub Actions (jika key.properties tidak ada/kosong)
-                storeFile = file("upload-keystore.jks")
-            }
-
-            // 2. Setup Password & Alias (Prioritas: File -> Env Var)
-            storePassword = keystoreProperties.getProperty("storePassword")
-                ?: System.getenv("ANDROID_STORE_PASSWORD")
-
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-                ?: System.getenv("ANDROID_KEY_ALIAS")
-
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-                ?: System.getenv("ANDROID_KEY_PASSWORD")
+            keyAlias = keystoreProperties["keyAlias"] as? String
+            keyPassword = keystoreProperties["keyPassword"] as? String
+            // ensure storeFile is converted to String before calling file(...)
+            storeFile = (keystoreProperties["storeFile"] as? String)?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as? String
         }
     }
 
@@ -67,11 +54,6 @@ android {
         getByName("release") {
             // Pasang signingConfig yang kita buat di atas
             signingConfig = signingConfigs.getByName("release")
-
-            // Syntax Kotlin beda dengan Groovy (pakai 'is' atau '=')
-            isMinifyEnabled = false
-            isShrinkResources = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
