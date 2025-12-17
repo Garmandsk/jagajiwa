@@ -21,7 +21,7 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
   void initState() {
     super.initState();
 
-    /// 🔥 RESET QUIZ AGAR TIDAK LANGSUNG KE "TERIMA KASIH"
+    /// RESET QUIZ AGAR TIDAK LANGSUNG KE TERIMA KASIH
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<QuizProvider>().resetQuiz();
     });
@@ -34,7 +34,7 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
   }
 
   bool _canProceed(QuizProvider provider, quiz) {
-    /// HALAMAN TERAKHIR → BOLEH LANGSUNG SELESAI
+    /// HALAMAN TERAKHIR BOLEH LANGSUNG SELESAI
     if (provider.currentIndex == provider.length - 1) return true;
 
     if (quiz.isTextInput) {
@@ -134,7 +134,6 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
 
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -142,44 +141,35 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
                 children: [
                   /// ================= TOP BAR (HILANG DI HALAMAN TERAKHIR)
                   if (!isLast)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: colors.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.close, color: colors.onSurface),
-                            onPressed: _showExitConfirmation,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.close, color: colors.onBackground),
+                          onPressed: _showExitConfirmation,
+                        ),
+
+                        Text(
+                          "Kuesioner",
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: colors.onBackground,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            "Kuesioner",
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: colors.onSurface,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: colors.primaryContainer,
+                            borderRadius: BorderRadius.circular(18),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: colors.primaryContainer,
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: Text(
-                              "${provider.currentIndex + 1} / ${provider.totalSteps}",
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: colors.onPrimaryContainer,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                          child: Text(
+                            "${provider.currentIndex + 1} / ${provider.totalSteps}",
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+
 
                   const SizedBox(height: 30),
 
@@ -188,7 +178,7 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
                     quiz.question,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: colors.onSurface,
+                      color: colors.onBackground, // 🔥 FIX DARK MODE
                       fontWeight: FontWeight.bold,
                       height: 1.3,
                     ),
@@ -229,20 +219,20 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
                               TextField(
                                 controller: _textController,
                                 maxLines: 4,
-                                style:
-                                TextStyle(color: colors.onSurface),
+                                cursorColor: Colors.black,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
                                 decoration: InputDecoration(
-                                  hintText:
-                                  "Tulis jawaban kamu di sini...",
+                                  hintText: "Tulis jawaban kamu di sini...",
                                   hintStyle: TextStyle(
-                                      color:
-                                      colors.onSurfaceVariant),
+                                    color: Colors.black.withOpacity(0.4),
+                                  ),
                                   filled: true,
-                                  fillColor:
-                                  colors.surfaceContainerHighest,
+                                  fillColor: Colors.white,
                                   border: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
                                   ),
                                 ),
@@ -263,15 +253,56 @@ class _QuizStartScreenState extends State<QuizStartScreen> {
                             onPressed: provider.currentIndex > 0
                                 ? () => _previous(provider)
                                 : null,
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                                    (states) {
+                                  if (states.contains(MaterialState.disabled)) {
+                                    return theme.brightness == Brightness.dark
+                                        ? Colors.white54
+                                        : Colors.black26;
+                                  }
+                                  return theme.brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black;
+                                },
+                              ),
+                              side: MaterialStateProperty.resolveWith<BorderSide>(
+                                    (states) {
+                                  return BorderSide(
+                                    color: theme.brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  );
+                                },
+                              ),
+                            ),
                             child: const Text("Sebelumnya"),
                           ),
                         ),
+
 
                       if (!isLast) const SizedBox(width: 12),
 
                       Expanded(
                         child: FilledButton(
                           onPressed: enabled ? () => _next(provider) : null,
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                                  (states) {
+                                // PUTIH TERANG WALAU DISABLED
+                                return Colors.white;
+                              },
+                            ),
+                            backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                                  (states) {
+                                // Background tetap terlihat walau disabled
+                                if (states.contains(MaterialState.disabled)) {
+                                  return Colors.white.withOpacity(0.25);
+                                }
+                                return colors.primary;
+                              },
+                            ),
+                          ),
                           child: Text(isLast ? "Selesai" : "Selanjutnya"),
                         ),
                       ),

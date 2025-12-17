@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/anonym_forum_provider.dart';
@@ -22,14 +21,25 @@ class _MakePostScreenState extends State<MakePostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Buat Posting')),
+      appBar: AppBar(
+        title: const Text('Buat Postingan'),
+        centerTitle: true, // ✅ JUDUL KE TENGAH
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Tuliskan apa pun yang ada di pikiranmu dengan bebas.'),
+            Text(
+              'Tuliskan apa pun yang ada di pikiranmu dengan bebas.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onBackground, // ✅ TERLIHAT DI DARK MODE
+              ),
+            ),
             const SizedBox(height: 12),
             Expanded(
               child: Container(
@@ -48,6 +58,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
                     hintText: 'Tulis sesuatu...',
                     hintStyle: TextStyle(color: Colors.white54),
                   ),
+                  onChanged: (_) => setState(() {}), // update counter
                 ),
               ),
             ),
@@ -55,12 +66,20 @@ class _MakePostScreenState extends State<MakePostScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${_controller.text.length}/$maxChars'),
+                Text(
+                  '${_controller.text.length}/$maxChars',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onBackground.withOpacity(0.7),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     final txt = _controller.text.trim();
                     if (txt.isEmpty) return;
-                    await Provider.of<AnonymForumProvider>(context, listen: false).createPost(txt);
+                    await Provider.of<AnonymForumProvider>(
+                      context,
+                      listen: false,
+                    ).createPost(txt);
                     if (mounted) Navigator.pop(context);
                   },
                   child: const Text('Kirim'),
