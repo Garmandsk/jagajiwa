@@ -11,7 +11,7 @@ class KeyboardKey extends StatelessWidget {
     super.key,
     this.text,
     this.icon,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = Colors.white,  // Will be overridden by theme
     this.fontSize = 20,
     this.onPressed,
   }) : assert(text != null || icon != null);
@@ -29,7 +29,7 @@ class KeyboardKey extends StatelessWidget {
             borderRadius: BorderRadius.circular(5.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.shadow.withOpacity(0.3),
                 offset: const Offset(0, 1),
                 blurRadius: 0.5,
               ),
@@ -42,10 +42,10 @@ class KeyboardKey extends StatelessWidget {
                   style: TextStyle(
                     fontSize: fontSize,
                     fontWeight: text == 'space' || text == 'return' ? FontWeight.w500 : FontWeight.normal,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 )
-              : Icon(icon, color: Colors.black, size: fontSize),
+              : Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: fontSize),
         ),
       ),
     );
