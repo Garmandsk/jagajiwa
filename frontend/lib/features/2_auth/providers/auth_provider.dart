@@ -93,7 +93,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
 
-    } on AuthException catch (e) {
+    } on AuthException {
       _errorMessage = 'Username atau kata sandi salah.';
     } catch (e) {
       _errorMessage = 'Gagal terhubung ke server.';

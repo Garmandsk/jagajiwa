@@ -10,6 +10,8 @@ class QuizResultHelper {
         return 'Risiko Sedang';
       case 4:
         return 'Risiko Tinggi';
+      case 5:
+        return 'Tidak Berisiko';
       default:
         return 'Belum Pernah Mengambil Kuis';
     }
@@ -24,8 +26,25 @@ class QuizResultHelper {
         return Colors.orange;
       case 4:
         return Colors.red;
+      case 5:
+        return Colors.green;
       default:
         return Colors.grey;
+    }
+  }
+
+  static IconData getQuizResultIcon(int? score) {
+    switch (score) {
+      case 2:
+        return Icons.health_and_safety_outlined;
+      case 3:
+        return Icons.warning_amber_rounded;
+      case 4:
+        return Icons.report_problem_rounded;
+      case 5:
+        return Icons.verified_user_rounded;
+      default:
+        return Icons.help_outline;
     }
   }
 }
