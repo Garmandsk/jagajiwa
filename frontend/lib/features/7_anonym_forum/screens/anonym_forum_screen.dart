@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/widgets/make_post_fab.dart';
 import 'package:provider/provider.dart';
 import '../../../app/widgets/ai_chatbot_fab.dart';
 import '../providers/anonym_forum_provider.dart';
@@ -139,7 +140,14 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
         },
       ),
 
-      floatingActionButton: const AiChatbotFab(),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 10,
+        children: [
+          const MakePostFab(),
+          const AiChatbotFab(),
+        ],
+      ),
 
       // ===== REUSABLE NAVIGATION BAR =====
       bottomNavigationBar: const MainNavigationBar(
