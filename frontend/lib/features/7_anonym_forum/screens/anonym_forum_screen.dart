@@ -25,7 +25,7 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MainNavigationBar(
+    return Scaffold(
       currentIndex: 1,
       appBar: AppBar(
         title: const Text('Forum Anonim'),
