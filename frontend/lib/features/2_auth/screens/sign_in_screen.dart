@@ -166,11 +166,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           
                           // 3. Ikon Anda ada di dalam sini
-                          child: FaIcon(
-                            FontAwesomeIcons.facebookF, 
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24, // Opsional: atur ukuran ikon
-                          ),
+
                         ),                
                                                 Container(
                           // 1. Beri padding agar garis tidak menempel ketat pada ikon
@@ -189,11 +185,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           
                           // 3. Ikon Anda ada di dalam sini
-                          child: FaIcon(
-                            FontAwesomeIcons.google, 
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24, // Opsional: atur ukuran ikon
-                          ),
                         ),
                         Container(
                           // 1. Beri padding agar garis tidak menempel ketat pada ikon
@@ -212,11 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           
                           // 3. Ikon Anda ada di dalam sini
-                          child: FaIcon(
-                            FontAwesomeIcons.instagram, 
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24, // Opsional: atur ukuran ikon
-                          ),
+
                         )
                       ],
                     ),
