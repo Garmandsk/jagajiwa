@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:frontend/app/widgets/navigation.dart';
 import 'package:go_router/go_router.dart';
@@ -26,15 +25,25 @@ class _MakePostScreenState extends State<MakePostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Buat Posting')),
+      appBar: AppBar(
+        title: const Text('Buat Postingan'),
+        centerTitle: true, // ✅ JUDUL KE TENGAH
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tuliskan apa pun yang ada di pikiranmu dengan bebas.', 
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
+            Text(
+              'Tuliskan apa pun yang ada di pikiranmu dengan bebas.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onBackground, // ✅ TERLIHAT DI DARK MODE
+              ),
+            ),
             const SizedBox(height: 12),
             Expanded(
               child: Container(
@@ -54,6 +63,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
                     hintText: 'Tulis sesuatu...',
                     hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
+                  onChanged: (_) => setState(() {}), // update counter
                 ),
               ),
             ),
@@ -61,7 +71,12 @@ class _MakePostScreenState extends State<MakePostScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${_controller.text.length}/$maxChars'),
+                Text(
+                  '${_controller.text.length}/$maxChars',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onBackground.withOpacity(0.7),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: _isLoading ? null : () async {
                     final txt = _controller.text.trim();

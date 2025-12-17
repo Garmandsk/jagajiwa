@@ -43,19 +43,42 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
               child: Text(
                 "Pusat Pengetahuan",                          
               ),
-            ),            
+            ),
             actions: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundColor: Colors.white.withAlpha(25),
-                  child: IconButton(
-                    icon: FaIcon(FontAwesomeIcons.dice, color: Colors.white),
-                    onPressed: () => context.push("/loss-simulation"), 
-                  ),
+                padding: const EdgeInsets.all(8),
+                child: Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+
+                    final iconColor = isDark
+                        ? Colors.amber
+                        : Theme.of(context).colorScheme.onSurface;
+
+                    final bgColor = isDark
+                        ? Colors.amber.withOpacity(0.2)
+                        : Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.15);
+
+                    return CircleAvatar(
+                      backgroundColor: bgColor,
+                      child: IconButton(
+                        splashRadius: 22,
+                        icon: FaIcon(
+                          FontAwesomeIcons.dice,
+                          size: 16,
+                          color: iconColor,
+                        ),
+                        onPressed: () => context.push('/loss-simulation'),
+                      ),
+                    );
+                  },
                 ),
               ),
-            ],    
+            ],
             bottom: PreferredSize(
               // 2. Tentukan ukuran tinggi garis
               preferredSize: const Size.fromHeight(1.0),

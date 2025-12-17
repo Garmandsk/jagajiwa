@@ -168,13 +168,11 @@ class _QuizScreenState extends State<QuizScreen> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.grey[900]
-                              : Colors.grey[100],
+                          color: isDark ? Colors.white : Colors.grey[100], // 🔥 CARD PUTIH
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isDark
-                                ? Colors.grey[800]!
+                                ? Colors.black12
                                 : Colors.grey[300]!,
                           ),
                         ),
@@ -186,11 +184,9 @@ class _QuizScreenState extends State<QuizScreen> {
                               children: [
                                 Text(
                                   formattedDate,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
-                                    color: isDark
-                                        ? Colors.white60
-                                        : Colors.black54,
+                                    color: Colors.black54, // 🔥 SELALU GELAP
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -229,7 +225,6 @@ class _QuizScreenState extends State<QuizScreen> {
       ),
 
       // ================= FAB & NAVBAR =================
-      floatingActionButton: const AiChatbotFab(),
       bottomNavigationBar: const MainNavigationBar(currentIndex: 2),
     );
   }

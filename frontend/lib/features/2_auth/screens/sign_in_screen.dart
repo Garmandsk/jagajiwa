@@ -63,8 +63,13 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.grain, size: 60, color: Colors.white),
-                    const SizedBox(height: 20),
+                    Image.asset(
+                      'assets/images/jajiw.png',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 0),
                   ],
                 ),
               ),
@@ -161,11 +166,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           
                           // 3. Ikon Anda ada di dalam sini
-                          child: FaIcon(
-                            FontAwesomeIcons.facebookF, 
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24, // Opsional: atur ukuran ikon
-                          ),
+
                         ),                
                                                 Container(
                           // 1. Beri padding agar garis tidak menempel ketat pada ikon
@@ -184,11 +185,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           
                           // 3. Ikon Anda ada di dalam sini
-                          child: FaIcon(
-                            FontAwesomeIcons.google, 
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24, // Opsional: atur ukuran ikon
-                          ),
                         ),
                         Container(
                           // 1. Beri padding agar garis tidak menempel ketat pada ikon
@@ -207,11 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           
                           // 3. Ikon Anda ada di dalam sini
-                          child: FaIcon(
-                            FontAwesomeIcons.instagram, 
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24, // Opsional: atur ukuran ikon
-                          ),
+
                         )
                       ],
                     ),

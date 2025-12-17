@@ -13,6 +13,8 @@ class MainNavigationBar extends StatelessWidget {
     this.appBar,
   });
 
+  static const double _iconSize = 26; // 🔥 ukuran seragam
+
   void _navigate(BuildContext context, String route) {
     context.go(route);
   }
@@ -35,31 +37,47 @@ class MainNavigationBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.home, color: _iconColor(0)),
+              icon: Icon(
+                Icons.home,
+                size: _iconSize,
+                color: _iconColor(0),
+              ),
               onPressed: () => _navigate(context, '/home'),
             ),
 
             IconButton(
-              icon: Icon(Icons.chat_bubble, color: _iconColor(1)),
+              icon: Icon(
+                Icons.chat_bubble,
+                size: _iconSize,
+                color: _iconColor(1),
+              ),
               onPressed: () => _navigate(context, '/anonym-forum'),
             ),
 
             IconButton(
               icon: Icon(
-                Icons.assignment, //
-                size: 28,
+                Icons.assignment,
+                size: _iconSize,
                 color: _iconColor(2),
               ),
               onPressed: () => _navigate(context, '/quiz'),
             ),
 
             IconButton(
-              icon: Icon(Icons.lightbulb, color: _iconColor(3)),
+              icon: Icon(
+                Icons.lightbulb,
+                size: _iconSize,
+                color: _iconColor(3),
+              ),
               onPressed: () => _navigate(context, '/knowledge'),
             ),
 
             IconButton(
-              icon: Icon(Icons.person, color: _iconColor(4)),
+              icon: Icon(
+                Icons.person,
+                size: _iconSize,
+                color: _iconColor(4),
+              ),
               onPressed: () => _navigate(context, '/profile'),
             ),
           ],
