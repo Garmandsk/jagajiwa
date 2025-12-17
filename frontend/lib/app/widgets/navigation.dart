@@ -3,10 +3,14 @@ import 'package:go_router/go_router.dart';
 
 class MainNavigationBar extends StatelessWidget {
   final int currentIndex;
+  final Widget? body;
+  final PreferredSizeWidget? appBar;
 
   const MainNavigationBar({
     super.key,
     required this.currentIndex,
+    this.body,
+    this.appBar,
   });
 
   void _navigate(BuildContext context, String route) {
@@ -15,6 +19,10 @@ class MainNavigationBar extends StatelessWidget {
 
   Color _iconColor(int index) {
     return currentIndex == index ? Colors.black : Colors.grey;
+  }
+
+  void _onFabPressed(BuildContext context) {
+    context.push('/make-post');
   }
 
   @override

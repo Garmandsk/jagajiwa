@@ -41,7 +41,7 @@ class AnonymForumProvider extends ChangeNotifier {
 
         // Parse Post
         final post = Post.fromJson(
-          item, 
+          item,
           likeCount: likeCount, 
           likedByMe: isLikedByMe
         );
@@ -94,13 +94,33 @@ class AnonymForumProvider extends ChangeNotifier {
       if (user == null) return;
 
       // 1. Ambil Anoname dari tabel profiles (sesuai setup sebelumnya)
-      final profileRes = await _supabase
-          .from('profiles')
-          .select('anoname')
-          .eq('profile_id', user.id)
-          .single();
-          
-      final String myAnoname = profileRes['anoname'] ?? 'Anonim';
+      String myAnoname = 'Anonim';
+      try {
+        final profileRes = await _supabase
+            .from('profiles')
+            .select('anoname')
+            .eq('profile_id', user.id)
+            .single();
+        myAnoname = profileRes['anoname'];
+        if (myAnoname == null || myAnoname.isEmpty) {
+          // Generate new anoname jika null
+          try {
+            final newName = await _supabase.rpc('get_new_anonymous_name');
+            myAnoname = newName as String? ?? 'Anonim';
+            // Update profiles juga
+            await _supabase
+                .from('profiles')
+                .update({'anoname': myAnoname})
+                .eq('profile_id', user.id);
+          } catch (e) {
+            debugPrint('Error generating anoname: $e');
+            myAnoname = 'Anonim';
+          }
+        }
+      } catch (e) {
+        debugPrint('Error fetching anoname: $e');
+        myAnoname = 'Anonim';
+      }
 
       // 2. Insert ke forum_posts
       await _supabase.from('forum_posts').insert({
@@ -155,7 +175,22 @@ class AnonymForumProvider extends ChangeNotifier {
 
       // Ambil Anoname lagi (bisa dioptimasi disimpan di variabel provider sih)
       final profileRes = await _supabase.from('profiles').select('anoname').eq('profile_id', user.id).single();
-      final String myAnoname = profileRes['anoname'] ?? 'Anonim';
+      String myAnoname = profileRes['anoname'];
+      if (myAnoname == null || myAnoname.isEmpty) {
+        // Generate new anoname jika null
+        try {
+          final newName = await _supabase.rpc('get_new_anonymous_name');
+          myAnoname = newName as String? ?? 'Anonim';
+          // Update profiles juga
+          await _supabase
+              .from('profiles')
+              .update({'anoname': myAnoname})
+              .eq('profile_id', user.id);
+        } catch (e) {
+          debugPrint('Error generating anoname: $e');
+          myAnoname = 'Anonim';
+        }
+      }
 
       await _supabase.from('forum_comments').insert({
         'post_id': postId,

@@ -3,6 +3,7 @@ import 'package:frontend/features/4_quiz/screens/quiz_result_screen.dart';
 import 'package:frontend/features/4_quiz/screens/quiz_screen.dart';
 import 'package:frontend/features/4_quiz/screens/quiz_start_screen.dart';
 import 'package:frontend/features/7_anonym_forum/screens/anonym_forum_screen.dart';
+import 'package:frontend/features/7_anonym_forum/screens/make_post_screen.dart';
 import 'package:frontend/features/8_chatbot/screens/chatbot_screen.dart';
 import 'package:frontend/features/6_loss_simulation/screens/loss_simulation_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -88,6 +89,10 @@ class AppRouter {
       GoRoute(
         path: '/make-post',
         builder: (context, state) => const MakePostScreen(), // Ganti dengan widget Anda
+      ),
+      GoRoute(
+        path: '/make-post',
+        builder: (context, state) => const MakePostScreen(),
       ),
       GoRoute(
         path: '/chatbot',

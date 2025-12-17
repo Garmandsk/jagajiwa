@@ -60,7 +60,7 @@ class _DetailCommentScreenState extends State<DetailCommentScreen> {
                         },
                         icon: Icon(
                           post.isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: post.isLiked ? Colors.red : null,
+                          color: post.isLiked ? Theme.of(context).colorScheme.error : null,
                         ),),
                       Text('${post.likes}'),
                       const SizedBox(width: 16),
@@ -161,7 +161,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         if (widget.replyingToAuthor != null)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 4),
-                            child: Text("${widget.replyingToAuthor} > ${c.author}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                            child: Text("${widget.replyingToAuthor} > ${c.author}", style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                           ),
                         Text(c.content),
                       ],
