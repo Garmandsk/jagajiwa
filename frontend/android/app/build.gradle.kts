@@ -5,12 +5,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// load file key.properties
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file("key.properties")
+// Load file key.properties
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
+
 android {
     namespace = "com.example.frontend"
     compileSdk = flutter.compileSdkVersion
@@ -26,18 +27,27 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile = keystorePropertiesFile.exists() ? file(keystoreProperties['storeFile']) : null
+        create("release") {
+            // LOGIKA HYBRID (Versi Kotlin):
 
-            storePassword = keystoreProperties['storePassword'] ?: System.getenv("ANDROID_STORE_PASSWORD")
-            keyAlias = keystoreProperties['keyAlias'] ?: System.getenv("ANDROID_KEY_ALIAS")
-            keyPassword = keystoreProperties['keyPassword'] ?: System.getenv("ANDROID_KEY_PASSWORD")
-
-            // Khusus storeFile untuk Env Var (GitHub Actions)
-            // Di GitHub kita decode .jks ke path tertentu, misal 'upload-keystore.jks'
-            if (storeFile == null) {
+            // 1. Setup storeFile
+            val keyStoreFileName = keystoreProperties.getProperty("storeFile")
+            if (keyStoreFileName != null) {
+                storeFile = file(keyStoreFileName)
+            } else {
+                // Fallback untuk GitHub Actions (jika key.properties tidak ada/kosong)
                 storeFile = file("upload-keystore.jks")
             }
+
+            // 2. Setup Password & Alias (Prioritas: File -> Env Var)
+            storePassword = keystoreProperties.getProperty("storePassword")
+                ?: System.getenv("ANDROID_STORE_PASSWORD")
+
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+                ?: System.getenv("ANDROID_KEY_ALIAS")
+
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+                ?: System.getenv("ANDROID_KEY_PASSWORD")
         }
     }
 
@@ -54,12 +64,14 @@ android {
     }
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.release
+        getByName("release") {
+            // Pasang signingConfig yang kita buat di atas
+            signingConfig = signingConfigs.getByName("release")
 
-                    minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Syntax Kotlin beda dengan Groovy (pakai 'is' atau '=')
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
