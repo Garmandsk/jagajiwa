@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - forum-anonym
+      - feature/home-5
     tags:
       - 'v*'
     paths:
