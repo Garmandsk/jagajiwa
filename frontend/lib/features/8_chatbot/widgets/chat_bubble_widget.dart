@@ -21,18 +21,18 @@ class ChatBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             if (!isUser)
-              const Padding(
-                padding: EdgeInsets.only(right: 8.0),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.black,
-                  child: Icon(Icons.android, color: Colors.white, size: 20),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  child: Icon(Icons.android, color: Theme.of(context).colorScheme.onPrimary, size: 20),
                 ),
               ),
             Container(
               constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75),
               decoration: BoxDecoration(
-                color: isUser ? Colors.black : Colors.grey[200],
+                color: isUser ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceVariant,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(15),
                   topRight: const Radius.circular(15),
@@ -44,17 +44,17 @@ class ChatBubble extends StatelessWidget {
               child: Text(
                 text,
                 style: TextStyle(
-                  color: isUser ? Colors.white : Colors.black,
+                  color: isUser ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
                   fontSize: 16,
                 ),
               ),
             ),
             if (isUser)
-              const Padding(
-                padding: EdgeInsets.only(left: 8.0),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.black,
-                  child: Icon(Icons.person, color: Colors.white, size: 20),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  child: Icon(Icons.person, color: Theme.of(context).colorScheme.onPrimary, size: 20),
                 ),
               ),
           ],
