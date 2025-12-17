@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/widgets/make_post_fab.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../app/widgets/ai_chatbot_fab.dart';
 import '../providers/anonym_forum_provider.dart';
@@ -26,11 +25,11 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      currentIndex: 1,
       appBar: AppBar(
         title: const Text('Forum Anonim'),
         centerTitle: true,
       ),
+
       body: Consumer<AnonymForumProvider>(
         builder: (context, prov, _) {
           // 1. Loading
@@ -44,12 +43,12 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.forum_outlined, size: 80, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  const Icon(Icons.forum_outlined, size: 80, color: Colors.grey),
                   const SizedBox(height: 16),
-                  Text(
+                  const Text(
                     'Belum ada postingan.\nJadilah yang pertama curhat!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -111,7 +110,7 @@ class _AnonymForumScreenState extends State<AnonymForumScreen> {
                             onPressed: () => prov.toggleLike(p.id),
                             icon: Icon(
                               p.isLiked ? Icons.favorite : Icons.favorite_border,
-                              color: p.isLiked ? Theme.of(context).colorScheme.error : null,
+                              color: p.isLiked ? Colors.red : null,
                             ),
                           ),
                           Text('${p.likes}'),
